@@ -5,8 +5,8 @@ Paciente::Paciente(string nome, int idade, string cpf, string telefone, string e
     this->historicoMedico = historicoMedico;
     this->curso = curso;
     this->email = email;
-    this->alunoUFPE = false;
-    this->bolsistaPROAES = false; 
+    this->alunoUFPE= alunoUFPE;
+    this->bolsistaPROAES= bolsistaPROAES; 
     this->status = "em analise";
 }
 
@@ -18,7 +18,7 @@ void Paciente::validar(){
     if(alunoUFPE && bolsistaPROAES == true){
         this->status = "Validado";
     } else if(alunoUFPE == true && bolsistaPROAES == false){
-        this->status = "apto apenas Acolhimento";
+        this->status = "apto porem perde priodade de fila";
     } else {
         this->status = "Nao Validado";
     }
