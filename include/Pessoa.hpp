@@ -8,14 +8,16 @@ using namespace std;
 
 class Pessoa{
 private:
-    string nome;
     int idade;
+    string nome;
+    string cpf;
+    string telefone;
+    string endereco;
 
 public:
-    Pessoa(string nome, int idade);
-
-    string getNome() const;
-    int getIdade() const;
+    Pessoa(string nome, int idade,string cpf, string telefone, string endereco);
+    string getPessoa();
+    int getIdade();
 };
 
 #endif
