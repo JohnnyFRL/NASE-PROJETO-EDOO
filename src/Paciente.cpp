@@ -1,7 +1,9 @@
 #include "Paciente.hpp"
 
-Paciente::Paciente(string nome, int idade, string cpf, string telefone, string endereco, string historicoMedico, string curso, string email, bool alunoUFPE, bool bolsistaPROAES)
-    : Pessoa(nome, idade, cpf, telefone, endereco) {
+
+Paciente::Paciente(string nome, int idade, string cpf, string telefone, string endereco, string historicoMedico, string curso, string email, bool alunoUFPE, bool bolsistaPROAES,
+    string login, string senha)
+    : Pessoa(nome, idade, cpf, telefone, endereco), Usuario(login, senha) {
     this->historicoMedico = historicoMedico;
     this->curso = curso;
     this->email = email;
@@ -26,4 +28,8 @@ void Paciente::validar(){
 
 string Paciente::getStatus() {
     return this->status;
+}
+
+void Paciente::menu(vector<Usuario*>& usuarios){
+    cout << "\n--- MENU PACIENTE ---" << endl;
 }
