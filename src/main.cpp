@@ -5,6 +5,7 @@
 #include "Paciente.hpp"
 #include "Usuario.hpp"
 #include "Funcionario.hpp"
+#include <limits>
 
 using namespace std;
 void exibirMenuFuncionario();
@@ -14,7 +15,6 @@ Usuario* loginSistema(vector<Usuario*>& usuarios);
 int main(){
     vector<Usuario*> usuarios;
     usuarios.push_back(new Funcionario("admin", "123"));
-
     int opcao;
     do{
         cout << "\n1. Login\n2. Cadastre-se\n0. Sair\n";
@@ -71,7 +71,10 @@ void cadastrarPacienteSistema(vector<Usuario*>& usuarios){
     
     cout << "E aluno da UFPE? (s/n): "; cin >> souA;
     alunoUFPE = (souA == 's' || souA == 'S');
-
+    if(alunoUFPE != true){
+    cout << "\n Apenas alunos da UFPE podem se cadastrar no sistema. \n";
+    return;
+}
     cout << "E bolsista PROAES? (s/n): "; cin >> souB;
     bolsistaPROAES = (souB == 's' || souB == 'S');
 

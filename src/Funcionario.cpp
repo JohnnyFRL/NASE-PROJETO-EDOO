@@ -26,12 +26,9 @@ void Funcionario::menu(vector<Usuario*>& usuarios){
                  break;
             case 2:
                 for(auto u : usuarios){
-                    Paciente* p = dynamic_cast<Paciente*>(u);
-                    if(p){
-                        cout << p->getPaciente() << endl;
-                    }
-                }
-                break;
+        cout << "Login: " << u->getLogin() << endl;
+    }
+    break;
             case 0:
                 cout << "Voltando ao menu...\n";
                 break;
