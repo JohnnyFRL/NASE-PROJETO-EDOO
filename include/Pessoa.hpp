@@ -19,6 +19,7 @@ public:
     Pessoa(string nome, int idade,string cpf, string telefone, string endereco);
     string getPessoa();
     int getIdade();
+    string getNome();
 };
 
 #endif

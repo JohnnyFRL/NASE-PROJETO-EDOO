@@ -5,12 +5,13 @@
 #include "Paciente.hpp"
 #include "Usuario.hpp"
 #include "Funcionario.hpp"
+#include "Triagem.hpp"
 #include <limits>
 
 using namespace std;
-void exibirMenuFuncionario();
 void cadastrarPacienteSistema(vector<Usuario*>& usuarios);
 Usuario* loginSistema(vector<Usuario*>& usuarios);
+void realizarTriagem(vector<Usuario*>& usuarios);
 
 int main(){
     vector<Usuario*> usuarios;
@@ -37,17 +38,12 @@ int main(){
     return 0;
 }
 
-void exibirMenuFuncionario(){
-    cout << "\n--- Portal do Atendente ---" << endl;
-    cout << "1. Cadastrar aluno" << endl;
-    cout << "2. ver historico" << endl;
-    cout << "0. voltar" << endl;
-    cout << "Escolha uma opcao: ";
-}
 
 void cadastrarPacienteSistema(vector<Usuario*>& usuarios){
     string nome, cpf, telefone, endereco, historico, curso, email;
+    string sintomas,tipoAtendimento; // triagem
     int idade;
+    int prioridade; // triagem
     string login, senha;
     char souA, souB;
     bool alunoUFPE, bolsistaPROAES;
@@ -107,4 +103,42 @@ Usuario* loginSistema(vector<Usuario*>& usuarios){
     }
 
     return nullptr;
+}
+
+void realizarTriagem(vector<Usuario*>& usuarios){
+    string login;
+    cout << "\nDigite o login do paciente: ";
+    cin >> login;
+
+    for(auto u : usuarios){
+        Paciente* p = dynamic_cast<Paciente*>(u);
+        if(p && p->getLogin() == login){
+            string sintomas, tipo;
+            int prioridade;
+
+            cout << "\n--- TRIAGEM ---\n";
+
+            cout << "escreva os sintomas do paciente: ";
+            getline(cin, sintomas);
+
+            cout << "Tipo de atendimento: ";
+            getline(cin, tipo);
+
+            cout << "Prioridade (1-alta | 2-media | 3-baixa): ";
+            cin >> prioridade;
+
+            while(prioridade < 1 || prioridade > 3){
+                cout << "Valor invalido! Digite 1, 2 ou 3: ";
+                cin >> prioridade;
+            }
+
+            Triagem* t = new Triagem(sintomas, tipo, prioridade);
+            p->setTriagem(t);
+
+            cout << "\n Triagem realizada com sucesso!\n";
+            return;
+        }
+    }
+
+    cout << "\n Paciente nao encontrado.\n";
 }

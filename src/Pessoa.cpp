@@ -15,3 +15,7 @@ string Pessoa::getPessoa(){
 int Pessoa::getIdade(){
     return idade;
 }
+
+string Pessoa::getNome(){
+    return nome;
+}

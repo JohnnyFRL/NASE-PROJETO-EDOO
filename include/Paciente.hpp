@@ -4,6 +4,8 @@
 #include "Pessoa.hpp"
 #include <vector>
 #include "Usuario.hpp"
+#include "Triagem.hpp"
+
 
 #include <string>
 using namespace std;
@@ -18,13 +20,19 @@ private:
     bool bolsistaPROAES;
     string status; // "Validado", "Não Validado", ou " apto apenas Acolhimento"
 
+    Triagem* triagem; // Associação com a classe Triagem
+
 public:
     Paciente(string nome, int idade, string cpf, string telefone, string endereco, string historicoMedico, string curso, string email, 
         bool alunoUFPE, bool bolsistaPROAES, string login, string senha);
     string getPaciente();
     void validar();
     string getStatus(); // status do paciente como valido ou não valido para triagem
-        void menu(vector<Usuario*>& usuarios) override;
+    
+    Triagem* getTriagem(); 
+    void setTriagem(Triagem* triagem);
+
+    void menu(vector<Usuario*>& usuarios) override;
 
 };
 #endif

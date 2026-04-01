@@ -10,10 +10,18 @@ Paciente::Paciente(string nome, int idade, string cpf, string telefone, string e
     this->alunoUFPE= alunoUFPE;
     this->bolsistaPROAES= bolsistaPROAES; 
     this->status = "em analise";
+    this->triagem = nullptr;
 }
 
-string Paciente::getPaciente() {
-    return getPessoa() + ", historicoMedico: " + historicoMedico + ", curso: " + curso + ", email: " + email;
+string Paciente::getPaciente(){
+    string info = "Nome: " + getNome(); // direto da classe Pessoa
+     info += " | Login: " + getLogin();
+     info += " | Status: " + status;
+    if(triagem != nullptr){
+        info += " | " + triagem->getResumo();
+    }
+
+    return info;
 }
 
 void Paciente::validar(){
@@ -32,4 +40,12 @@ string Paciente::getStatus() {
 
 void Paciente::menu(vector<Usuario*>& usuarios){
     cout << "\n--- MENU PACIENTE ---" << endl;
+}
+
+Triagem* Paciente::getTriagem(){
+    return triagem;
+}
+
+void Paciente::setTriagem(Triagem* t){
+    this->triagem = t;
 }

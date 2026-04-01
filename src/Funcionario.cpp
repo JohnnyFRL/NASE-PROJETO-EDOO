@@ -3,7 +3,9 @@
 #include <iostream>
 #include <vector>
 
+void realizarTriagem(std::vector<Usuario*>& usuarios);
 void cadastrarPacienteSistema(std::vector<Usuario*>& usuarios);
+
 
 using namespace std;
 
@@ -16,6 +18,7 @@ void Funcionario::menu(vector<Usuario*>& usuarios){
         cout << "\n--- Portal do Atendente ---" << endl;
         cout << "1. Cadastrar aluno" << endl;
         cout << "2. ver historico" << endl;
+        cout << "3. realizar triagem" << endl;
         cout << "0. voltar" << endl;
         cout << "Escolha uma opcao: ";
         cin >> opcao;
@@ -26,8 +29,14 @@ void Funcionario::menu(vector<Usuario*>& usuarios){
                  break;
             case 2:
                 for(auto u : usuarios){
-        cout << "Login: " << u->getLogin() << endl;
+         Paciente* p = dynamic_cast<Paciente*>(u);
+    if(p){
+        cout << p->getPaciente() << endl;
     }
+    }
+    break;
+            case 3:
+                 realizarTriagem(usuarios);
     break;
             case 0:
                 cout << "Voltando ao menu...\n";

@@ -16,6 +16,6 @@ public:
     string getLogin();
     bool autenticar(string senha);
     virtual void menu(vector<Usuario*>& usuarios) = 0; // pra ser usado nas classes filhas de forma obrigatoria
-
+    virtual ~Usuario() {} // garantir limpeza de memoria para classes filhas
 };
 #endif
