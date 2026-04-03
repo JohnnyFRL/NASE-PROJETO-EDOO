@@ -38,7 +38,7 @@ string Paciente::getStatus() {
     return this->status;
 }
 
-void Paciente::menu(vector<Usuario*>& usuarios){
+void Paciente::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
     cout << "\n--- MENU PACIENTE ---" << endl;
 }
 

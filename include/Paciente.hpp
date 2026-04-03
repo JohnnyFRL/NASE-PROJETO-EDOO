@@ -32,7 +32,7 @@ public:
     Triagem* getTriagem(); 
     void setTriagem(Triagem* triagem);
 
-    void menu(vector<Usuario*>& usuarios) override;
+    void menu(vector<Usuario*>& usuarios, FilaPrioridade& fila) override;
 
 };
 #endif

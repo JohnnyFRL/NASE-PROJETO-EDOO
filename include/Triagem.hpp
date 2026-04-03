@@ -14,6 +14,7 @@ public:
     string getSintomas();
     string getTipoAtendimento();
     string getResumo();
+    int getPrioridade();
 };
 
 #endif

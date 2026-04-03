@@ -6,17 +6,21 @@
 #include "Usuario.hpp"
 #include "Funcionario.hpp"
 #include "Triagem.hpp"
+#include "FilaPrioridade.hpp"
+
 #include <limits>
 
 using namespace std;
 void cadastrarPacienteSistema(vector<Usuario*>& usuarios);
-Usuario* loginSistema(vector<Usuario*>& usuarios);
-void realizarTriagem(vector<Usuario*>& usuarios);
+Usuario* loginSistema(vector<Usuario*>& usuarios, FilaPrioridade& fila);
+void realizarTriagem(vector<Usuario*>& usuarios, FilaPrioridade& fila);
 
 int main(){
+    FilaPrioridade fila;
     vector<Usuario*> usuarios;
     usuarios.push_back(new Funcionario("admin", "123"));
     int opcao;
+    
     do{
         cout << "\n1. Login\n2. Cadastre-se\n0. Sair\n";
         cin >> opcao;
@@ -26,10 +30,10 @@ int main(){
         }
 
         if(opcao == 1){
-            Usuario* u = loginSistema(usuarios);
+            Usuario* u = loginSistema(usuarios, fila);
 
             if(u != nullptr){
-                u->menu(usuarios);
+                u->menu(usuarios, fila);
             } else {
                 cout << "Login invalido\n";
             }
@@ -87,7 +91,7 @@ void cadastrarPacienteSistema(vector<Usuario*>& usuarios){
     cout << "\n Paciente cadastrado" << endl;
 }
 
-Usuario* loginSistema(vector<Usuario*>& usuarios){
+Usuario* loginSistema(vector<Usuario*>& usuarios, FilaPrioridade& fila){
     string login, senha;
 
     cout << "Login: ";
@@ -105,7 +109,8 @@ Usuario* loginSistema(vector<Usuario*>& usuarios){
     return nullptr;
 }
 
-void realizarTriagem(vector<Usuario*>& usuarios){
+void realizarTriagem(vector<Usuario*>& usuarios, FilaPrioridade& fila){
+    
     string login;
     cout << "\nDigite o login do paciente: ";
     cin >> login;
@@ -134,6 +139,7 @@ void realizarTriagem(vector<Usuario*>& usuarios){
 
             Triagem* t = new Triagem(sintomas, tipo, prioridade);
             p->setTriagem(t);
+            fila.adicionarPaciente(p);
 
             cout << "\n Triagem realizada com sucesso!\n";
             return;

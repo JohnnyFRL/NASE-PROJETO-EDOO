@@ -16,3 +16,7 @@ string Triagem::getResumo(){
 string Triagem::getTipoAtendimento(){
     return tipoAtendimento;
 }
+
+int Triagem::getPrioridade(){
+    return prioridade;
+}
