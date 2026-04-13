@@ -33,6 +33,8 @@ public:
     void setTriagem(Triagem* triagem);
 
     void menu(vector<Usuario*>& usuarios, FilaPrioridade& fila) override;
+    bool isAlunoUFPE();
+    bool isBolsistaPROAES();
 
 };
 #endif

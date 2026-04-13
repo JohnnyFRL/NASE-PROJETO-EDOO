@@ -49,3 +49,11 @@ Triagem* Paciente::getTriagem(){
 void Paciente::setTriagem(Triagem* t){
     this->triagem = t;
 }
+
+bool Paciente::isAlunoUFPE(){
+    return alunoUFPE;
+}
+
+bool Paciente::isBolsistaPROAES(){
+    return bolsistaPROAES;
+}

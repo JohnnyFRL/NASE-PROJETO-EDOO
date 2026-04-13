@@ -10,6 +10,11 @@ void FilaPrioridade::adicionarPaciente(Paciente* p) {
     }
 
      int prioridade = p->getTriagem()->getPrioridade();
+    if (p->isAlunoUFPE() && !p->isBolsistaPROAES()) {
+        prioridade = 3;
+        cout << "Paciente nao bolsista → prioridade ajustada para BAIXA.\n";
+    }
+
     if (prioridade == 1) {
         filaAlta.push(p);
         cout << "Paciente adicionado a fila de alta prioridade.\n";
