@@ -61,7 +61,20 @@ void cadastrarPacienteSistema(vector<Usuario*>& usuarios){
     cin.ignore();
 
     cout << "Nome: "; getline(cin, nome);
-    cout << "Idade: "; cin >> idade; cin.ignore();
+     while(true){
+        cout << "Idade: ";
+        cin >> idade;
+        if(cin.fail()){
+            cout << "invalido! \n";
+            cin.clear();
+            cin.ignore(1000, '\n');
+        } else if(idade <= 0){
+            cout << "Idade invalida!\n";
+        } else{
+            cin.ignore();
+            break;
+        }
+    }
     cout << "CPF: "; getline(cin, cpf);
     cout << "Telefone: "; getline(cin, telefone);
     cout << "Endereco: "; getline(cin, endereco);
