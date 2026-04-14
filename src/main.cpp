@@ -46,6 +46,7 @@ int main(){
 void cadastrarPacienteSistema(vector<Usuario*>& usuarios){
     string nome, cpf, telefone, endereco, historico, curso, email;
     string sintomas,tipoAtendimento; // triagem
+    string numeros = "";
     int idade;
     int prioridade; // triagem
     string login, senha;
@@ -75,7 +76,33 @@ void cadastrarPacienteSistema(vector<Usuario*>& usuarios){
             break;
         }
     }
-    cout << "CPF: "; getline(cin, cpf);
+    while(true){
+    cout << "CPF: ";
+    getline(cin, cpf);
+    numeros = "";
+    bool valido = true;
+    for(char c : cpf){
+        if(c >= '0' && c <= '9'){
+            numeros += c;
+        } 
+        else if(c == '.' || c == '-'){
+            continue;
+        } 
+        else {
+            valido = false;
+            break;
+        }
+    }
+    if(!valido){
+        cout << "CPF invalido! Use apenas numeros, pontos ou traço.\n";
+        continue;
+    }
+    if(numeros.size() != 11){
+        cout << "CPF deve ter 11 digitos!\n";
+        continue;
+    }
+    break;
+}
     cout << "Telefone: "; getline(cin, telefone);
     cout << "Endereco: "; getline(cin, endereco);
     cout << "Historico Medico: "; getline(cin, historico);
