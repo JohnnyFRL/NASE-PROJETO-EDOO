@@ -8,24 +8,25 @@ void FilaPrioridade::adicionarPaciente(Paciente* p) {
         cout << "Paciente sem triagem, nao pode ser adicionado a fila.\n";
         return;
     }
+     if(p->getStatusEnum() == NAO_VALIDADO){
+        cout << "Paciente nao validado nao entra na fila.\n";
+        return;
+    }
 
-     int prioridade = p->getTriagem()->getPrioridade();
-    if (p->isAlunoUFPE() && !p->isBolsistaPROAES()) {
+    int prioridade = p->getTriagem()->getPrioridade();
+    if(p->getStatusEnum() == PERDE_PRIORIDADE){
         prioridade = 3;
-        cout << "Paciente nao bolsista → prioridade ajustada para BAIXA.\n";
     }
 
-    if (prioridade == 1) {
+    if(prioridade == 1){
         filaAlta.push(p);
-        cout << "Paciente adicionado a fila de alta prioridade.\n";
-    } else if (prioridade == 2) {
-        filaMedia.push(p);
-        cout << "Paciente adicionado a fila de media prioridade.\n";
-    } else {
-        filaBaixa.push(p);
-        cout << "Paciente adicionado a fila de baixa prioridade.\n";
     }
-    
+    else if(prioridade == 2){
+        filaMedia.push(p);
+    }
+    else{
+        filaBaixa.push(p);
+    }
 }
 
  Paciente * FilaPrioridade::chamarProximo() {

@@ -9,14 +9,14 @@ Paciente::Paciente(string nome, int idade, string cpf, string telefone, string e
     this->email = email;
     this->alunoUFPE= alunoUFPE;
     this->bolsistaPROAES= bolsistaPROAES; 
-    this->status = "em analise";
+    this->status = NAO_VALIDADO;
     this->triagem = nullptr;
 }
 
 string Paciente::getPaciente(){
     string info = "Nome: " + getNome(); // direto da classe Pessoa
      info += " | Login: " + getLogin();
-     info += " | Status: " + status;
+    info += " | Status: " + getStatus();
     if(triagem != nullptr){
         info += " | " + triagem->getResumo();
     }
@@ -25,17 +25,26 @@ string Paciente::getPaciente(){
 }
 
 void Paciente::validar(){
-    if(alunoUFPE && bolsistaPROAES == true){
-        this->status = "Validado";
-    } else if(alunoUFPE == true && bolsistaPROAES == false){
-        this->status = "apto porem perde priodade de fila";
-    } else {
-        this->status = "Nao Validado";
+    if(alunoUFPE && bolsistaPROAES){
+        status = VALIDADO;
+    } else if(alunoUFPE){
+        status = PERDE_PRIORIDADE;
+    } else{
+        status = NAO_VALIDADO;
     }
 }
 
-string Paciente::getStatus() {
-    return this->status;
+string Paciente::getStatus(){
+    switch(status){
+        case VALIDADO: return "Validado";
+        case NAO_VALIDADO: return "Nao validado";
+        case PERDE_PRIORIDADE: return "Perde prioridade";
+        default: return "Desconhecido";
+    }
+}
+
+StatusPaciente Paciente::getStatusEnum(){
+    return status;
 }
 
 void Paciente::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){

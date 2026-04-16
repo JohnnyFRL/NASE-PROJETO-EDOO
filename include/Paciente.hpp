@@ -10,6 +10,15 @@
 #include <string>
 using namespace std;
 
+
+enum StatusPaciente {
+    NAO_VALIDADO,
+    VALIDADO,
+    PERDE_PRIORIDADE,
+};
+
+
+class FilaPrioridade; // evitar erro de declaracao circular, já que FilaPrioridade inclui Paciente e Paciente inclui FilaPrioridade
 class Paciente : public Pessoa, public Usuario{
 
 private:
@@ -18,7 +27,7 @@ private:
     string email;
     bool alunoUFPE;
     bool bolsistaPROAES;
-    string status; // "Validado", "Não Validado", ou " apto apenas Acolhimento"
+    StatusPaciente status; // "Validado", "Não Validado", ou " apto apenas Acolhimento"
 
     Triagem* triagem; // Associação com a classe Triagem
 
@@ -35,6 +44,7 @@ public:
     void menu(vector<Usuario*>& usuarios, FilaPrioridade& fila) override;
     bool isAlunoUFPE();
     bool isBolsistaPROAES();
+    StatusPaciente getStatusEnum();
 
 };
 #endif
