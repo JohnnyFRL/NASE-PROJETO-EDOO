@@ -22,6 +22,7 @@ void Funcionario::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
         cout << "4. chamar proximo paciente" << endl;
         cout << "5. mostrar status das filas" << endl;
         cout << "6. mostrar ordem das filas" << endl;
+        cout << "7. Ver solicitacoes\n";
         cout << "0. voltar" << endl;
         cout << "Escolha uma opcao: ";
         cin >> opcao;
@@ -55,6 +56,31 @@ void Funcionario::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
             case 6:
                 fila.ordemFila();
                 break;
+            case 7:
+            for(auto u : usuarios){
+            Paciente* p = dynamic_cast<Paciente*>(u);
+            if(p && p->possuiSolicitacao()){
+            cout << "\nPaciente: " << p->getNome() << endl;
+            cout << "Sintomas: " << p->getDescricaoSolicitacao() << endl;
+            string tipo;
+            int prioridade;
+            cout << "Tipo de atendimento: ";
+            cin.ignore();
+            getline(cin, tipo);
+            cout << "Prioridade (1-3): ";
+            cin >> prioridade;
+            Triagem* t = new Triagem(
+                p->getDescricaoSolicitacao(),
+                tipo,
+                prioridade
+            );
+            p->setTriagem(t);
+            fila.adicionarPaciente(p);
+            p->limparSolicitacao();
+            cout << "Paciente adicionado a fila!\n";
+        }
+    }
+            break;
             case 0:
                 cout << "Voltando ao menu...\n";
                 break;

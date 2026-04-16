@@ -45,6 +45,12 @@ public:
     bool isAlunoUFPE();
     bool isBolsistaPROAES();
     StatusPaciente getStatusEnum();
+    void solicitarConsulta();
+    string descricaoSolicitacao;
+    bool temSolicitacao;
+    string getDescricaoSolicitacao();
+    bool possuiSolicitacao();
+    void limparSolicitacao();
 
 };
 #endif
