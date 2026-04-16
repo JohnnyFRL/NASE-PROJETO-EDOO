@@ -21,6 +21,9 @@ string Paciente::getPaciente(){
     if(triagem != nullptr){
         info += " | " + triagem->getResumo();
     }
+    for(string h : historicoSolicitacoes){
+    info += "\n  - " + h;
+}
 
     return info;
 }
@@ -54,7 +57,8 @@ void Paciente::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
     do{
         cout << "\n--- MENU PACIENTE ---\n";
         cout << "1. Solicitar consulta\n";
-        cout << "2. Ver meus dados\n";
+        cout << "2. Ver historico\n";
+        cout << "3. Ver meus dados\n";
         cout << "0. Sair\n";
         cout << "Escolha: ";
         cin >> opcao;
@@ -65,8 +69,11 @@ void Paciente::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
                 break;
 
             case 2:
-                cout << getPaciente() << endl;
+                mostrarHistorico();
                 break;
+            case 3:
+                cout << getPaciente() << endl;
+                break; 
 
             case 0:
                 cout << "Saindo...\n";
@@ -123,4 +130,29 @@ bool Paciente::possuiSolicitacao(){
 
 void Paciente::limparSolicitacao(){
     temSolicitacao = false;
+}
+
+void Paciente::adicionarHistorico(string registro){
+    historicoSolicitacoes.push_back(registro);
+}
+
+vector<string> Paciente::getHistoricoSolicitacoes(){
+    return historicoSolicitacoes;
+}
+
+void Paciente::finalizarAtendimento(){
+    temSolicitacao = false;
+    descricaoSolicitacao = "";
+   // triagem = nullptr; nao usar para manter historico do paciente 
+}
+
+void Paciente::mostrarHistorico(){
+    cout << "\n--- HISTORICO DO PACIENTE ---\n";
+    if(historicoSolicitacoes.empty()){
+        cout << "Nenhum registro encontrado.\n";
+        return;
+    }
+    for(string h : historicoSolicitacoes){
+        cout << "- " << h << endl;
+    }
 }

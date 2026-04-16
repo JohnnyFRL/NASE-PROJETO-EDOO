@@ -28,6 +28,7 @@ private:
     bool alunoUFPE;
     bool bolsistaPROAES;
     StatusPaciente status; // "Validado", "Não Validado", ou " apto apenas Acolhimento"
+    vector<string> historicoSolicitacoes; // aluno vai ter um historico de solicitacoes de consulta, para o funcionario poder avaliar se o paciente tem um padrao de solicitacao que pode indicar abuso do sistema
 
     Triagem* triagem; // Associação com a classe Triagem
 
@@ -51,6 +52,9 @@ public:
     string getDescricaoSolicitacao();
     bool possuiSolicitacao();
     void limparSolicitacao();
-
+    void adicionarHistorico(string registro);
+    vector<string> getHistoricoSolicitacoes();
+    void finalizarAtendimento(); // correção de erro para atualizar quando o paciente sai da fila para pode pedir uma nova consulta depois, já que o sistema só permite uma solicitacao ativa por paciente
+    void mostrarHistorico();
 };
 #endif

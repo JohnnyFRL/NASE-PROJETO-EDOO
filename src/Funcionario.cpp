@@ -45,6 +45,7 @@ void Funcionario::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
             case 4: {
                  Paciente* p = fila.chamarProximo();
                if(p != nullptr){
+                p->finalizarAtendimento(); // para atualizar paciente e pode pedir uma nova consulta depois.
                cout << "Chamando paciente...\n";
     }
     break;
@@ -57,27 +58,67 @@ void Funcionario::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
                 fila.ordemFila();
                 break;
             case 7:
-            for(auto u : usuarios){
-            Paciente* p = dynamic_cast<Paciente*>(u);
-            if(p && p->possuiSolicitacao()){
+             for(auto u : usuarios){
+        Paciente* p = dynamic_cast<Paciente*>(u);
+
+        if(p && p->possuiSolicitacao()){
+            int opc;
+
             cout << "\nPaciente: " << p->getNome() << endl;
             cout << "Sintomas: " << p->getDescricaoSolicitacao() << endl;
-            string tipo;
-            int prioridade;
-            cout << "Tipo de atendimento: ";
-            cin.ignore();
-            getline(cin, tipo);
-            cout << "Prioridade (1-3): ";
-            cin >> prioridade;
-            Triagem* t = new Triagem(
-                p->getDescricaoSolicitacao(),
-                tipo,
-                prioridade
-            );
-            p->setTriagem(t);
-            fila.adicionarPaciente(p);
-            p->limparSolicitacao();
-            cout << "Paciente adicionado a fila!\n";
+
+            cout << "\n1. Aceitar (fazer triagem)\n";
+            cout << "2. Negar solicitacao\n";
+            cout << "3. Pular\n";
+            cout << "0. Voltar\n";
+            cout << "Escolha: ";
+            cin >> opc;
+
+            if(opc == 1){
+                string tipo;
+                int prioridade;
+
+                cin.ignore();
+
+                cout << "Tipo de atendimento: ";
+                getline(cin, tipo);
+
+                cout << "Prioridade (1-3): ";
+                cin >> prioridade;
+
+                while(prioridade < 1 || prioridade > 3){
+                    cout << "Valor invalido! Digite 1, 2 ou 3: ";
+                    cin >> prioridade;
+                }  Triagem* t = new Triagem(
+                    p->getDescricaoSolicitacao(),
+                    tipo,
+                    prioridade
+                );
+
+                p->setTriagem(t);
+                fila.adicionarPaciente(p);
+
+                p->adicionarHistorico(
+                    "Solicitacao: " + p->getDescricaoSolicitacao() + " -> ACEITA"   //historico do paciente adicionado
+                );
+                p->adicionarHistorico(
+                    "Triagem: " + tipo + 
+                    " | Prioridade: " + to_string(prioridade)
+                );
+                p->limparSolicitacao();
+
+                cout << "Paciente adicionado a fila!\n";
+            } else if(opc == 2){
+                p->adicionarHistorico(
+                    "Solicitacao: " + p->getDescricaoSolicitacao() + " -> NEGADA"
+                );
+
+                p->limparSolicitacao();
+
+                cout << "Solicitacao negada.\n";
+            } else if(opc == 0){
+                break;
+            }
         }
     }
             break;
