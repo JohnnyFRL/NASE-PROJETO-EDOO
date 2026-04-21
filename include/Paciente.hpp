@@ -29,7 +29,8 @@ private:
     bool bolsistaPROAES;
     StatusPaciente status; // "Validado", "Não Validado", ou " apto apenas Acolhimento"
     vector<string> historicoSolicitacoes; // aluno vai ter um historico de solicitacoes de consulta, para o funcionario poder avaliar se o paciente tem um padrao de solicitacao que pode indicar abuso do sistema
-
+    bool temSolicitacao; // correção de bug de duplicado na triagem
+    string descricaoSolicitacao;
     Triagem* triagem; // Associação com a classe Triagem
 
 public:
@@ -47,8 +48,6 @@ public:
     bool isBolsistaPROAES();
     StatusPaciente getStatusEnum();
     void solicitarConsulta();
-    string descricaoSolicitacao;
-    bool temSolicitacao;
     string getDescricaoSolicitacao();
     bool possuiSolicitacao();
     void limparSolicitacao();

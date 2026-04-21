@@ -12,6 +12,9 @@ void FilaPrioridade::adicionarPaciente(Paciente* p) {
         cout << "Paciente nao validado nao entra na fila.\n";
         return;
     }
+     if(p->possuiSolicitacao()){
+    p->limparSolicitacao();
+    }
 
     int prioridade = p->getTriagem()->getPrioridade();
     if(p->getStatusEnum() == PERDE_PRIORIDADE){

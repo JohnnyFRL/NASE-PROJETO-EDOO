@@ -180,7 +180,8 @@ void realizarTriagem(vector<Usuario*>& usuarios, FilaPrioridade& fila){
             Triagem* t = new Triagem(sintomas, tipo, prioridade);
             p->setTriagem(t);
             fila.adicionarPaciente(p);
-
+           // p->temSolicitacao = false; //correcao do bug de paciente duplicado na triagem
+            p->limparSolicitacao();
             cout << "\n Triagem realizada com sucesso!\n";
             return;
         }

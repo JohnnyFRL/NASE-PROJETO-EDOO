@@ -12,6 +12,7 @@ Paciente::Paciente(string nome, int idade, string cpf, string telefone, string e
     this->bolsistaPROAES= bolsistaPROAES; 
     this->status = NAO_VALIDADO;
     this->triagem = nullptr;
+    this->temSolicitacao = false;
 }
 
 string Paciente::getPaciente(){
@@ -130,6 +131,7 @@ bool Paciente::possuiSolicitacao(){
 
 void Paciente::limparSolicitacao(){
     temSolicitacao = false;
+    descricaoSolicitacao = ""; // evitar lixo de dados
 }
 
 void Paciente::adicionarHistorico(string registro){
