@@ -109,7 +109,7 @@ void cadastrarPacienteSistema(vector<Usuario*>& usuarios){
         continue;
     }
         idade = stoi(idadeStr);
-        if(idade <= 0){
+        if(idade <= 0 || idade > 130){
             cout << "[ERRO] Idade invalida!\n";
             continue;
     }
