@@ -145,7 +145,13 @@ vector<string> Paciente::getHistoricoSolicitacoes(){
 void Paciente::finalizarAtendimento(){
     temSolicitacao = false;
     descricaoSolicitacao = "";
-   // triagem = nullptr; nao usar para manter historico do paciente 
+
+    adicionarHistorico(
+        "Atendimento finalizado | Ultima prioridade: " + 
+        to_string(triagem->getPrioridade())
+    );
+
+    // NÃO apaga triagem → mantém histórico
 }
 
 void Paciente::mostrarHistorico(){
