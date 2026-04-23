@@ -23,12 +23,8 @@ int main(){
     int opcao;
     
     do{
-        cout << "\n1. Login\n2. Cadastre-se\n0. Sair\n";
+        cout << "\n1. Login\n0. Sair\n";
         cin >> opcao;
-
-        if(opcao == 2){
-            cadastrarPacienteSistema(usuarios);
-        }
 
         if(opcao == 1){
             Usuario* u = loginSistema(usuarios, fila);

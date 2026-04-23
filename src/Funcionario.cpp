@@ -67,7 +67,7 @@ void Funcionario::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
             cout << "\nPaciente: " << p->getNome() << endl;
             cout << "Sintomas: " << p->getDescricaoSolicitacao() << endl;
 
-            cout << "\n1. Aceitar (fazer triagem)\n";
+            cout << "\n1. marcar consulta\n";
             cout << "2. Negar solicitacao\n";
             cout << "3. Pular\n";
             cout << "0. Voltar\n";
