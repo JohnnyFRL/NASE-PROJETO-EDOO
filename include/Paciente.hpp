@@ -22,7 +22,6 @@ class FilaPrioridade; // evitar erro de declaracao circular, já que FilaPriorid
 class Paciente : public Pessoa, public Usuario{
 
 private:
-    string historicoMedico;
     string curso;
     string email;
     bool alunoUFPE;
@@ -33,7 +32,7 @@ private:
     Triagem* triagem; // Associação com a classe Triagem
     
 public:
-    Paciente(string nome, int idade, string cpf, string telefone, string endereco, string historicoMedico, string curso, string email, 
+    Paciente(string nome, int idade, string cpf, string telefone, string endereco, string curso, string email, 
         bool alunoUFPE, bool bolsistaPROAES, string login, string senha);
     string getPaciente();
     void validar();

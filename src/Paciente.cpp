@@ -2,10 +2,9 @@
 #include "Paciente.hpp"
 
 
-Paciente::Paciente(string nome, int idade, string cpf, string telefone, string endereco, string historicoMedico, string curso, string email, bool alunoUFPE, bool bolsistaPROAES,
+Paciente::Paciente(string nome, int idade, string cpf, string telefone, string endereco, string curso, string email, bool alunoUFPE, bool bolsistaPROAES,
     string login, string senha)
     : Pessoa(nome, idade, cpf, telefone, endereco), Usuario(login, senha) {
-    this->historicoMedico = historicoMedico;
     this->curso = curso;
     this->email = email;
     this->alunoUFPE= alunoUFPE;

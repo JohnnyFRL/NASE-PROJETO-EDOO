@@ -24,6 +24,7 @@ int main(){
     
     do{
         cout << "\n1. Login\n0. Sair\n";
+        cout << "\n Usuario de teste: admin / Admin@123\ndigite: ";
         cin >> opcao;
 
         if(opcao == 1){
@@ -41,7 +42,7 @@ int main(){
 
 
 void cadastrarPacienteSistema(vector<Usuario*>& usuarios){
-    string nome, cpf, telefone, endereco, historico, curso, email;
+    string nome, cpf, telefone, endereco, curso, email;
     string numeros = "";
     int idade;
     string login, senha;
@@ -153,9 +154,6 @@ void cadastrarPacienteSistema(vector<Usuario*>& usuarios){
     cout << "Endereco: ";
     getline(cin, endereco);
 
-    cout << "Historico Medico: ";
-    getline(cin, historico);
-
     cout << "Curso: ";
     getline(cin, curso);
 
@@ -184,7 +182,7 @@ void cadastrarPacienteSistema(vector<Usuario*>& usuarios){
 
     Paciente* novo = new Paciente(
         nome, idade, cpf, telefone, endereco,
-        historico, curso, email,
+        curso, email,
         alunoUFPE, bolsistaPROAES,
         login, senha
     );
