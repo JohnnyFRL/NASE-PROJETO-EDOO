@@ -12,7 +12,6 @@
 #include <limits>
 
 using namespace std;
-
 void cadastrarPacienteSistema(vector<Usuario*>& usuarios);
 Usuario* loginSistema(vector<Usuario*>& usuarios, FilaPrioridade& fila);
 void realizarTriagem(vector<Usuario*>& usuarios, FilaPrioridade& fila);
