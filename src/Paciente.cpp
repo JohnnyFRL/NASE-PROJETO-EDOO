@@ -13,6 +13,7 @@ Paciente::Paciente(string nome, int idade, string cpf, string telefone, string e
     this->status = NAO_VALIDADO;
     this->triagem = nullptr;
     this->temSolicitacao = false;
+    this->jaFezTriagem = false;
 }
 
 string Paciente::getPaciente(){
@@ -87,10 +88,10 @@ void Paciente::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
     }while(opcao != 0); 
 }
 void Paciente::solicitarConsulta(){
-    if(triagem == nullptr){
-        cout << "Voce precisa passar pela triagem inicial antes de solicitar consulta.\n";
-        return;
-    } // pra não duplicar a triagem, já que o paciente só pode solicitar consulta depois de ter sido triado, ou seja, ter uma triagem associada a ele
+    if(!jaFezTriagem){
+    cout << "Voce precisa passar pela triagem inicial primeiro.\n";
+    return;
+} // pra não duplicar a triagem, já que o paciente só pode solicitar consulta depois de ter sido triado, ou seja, ter uma triagem associada a ele
     if(temSolicitacao){
     cout << "Voce ja possui uma solicitacao em andamento.\n";
     return; // não pode ter outra solicitacao
