@@ -87,20 +87,34 @@ void cadastrarPacienteSistema(vector<Usuario*>& usuarios){
     }
 
     // Validacao de idade (original)
+    string idadeStr;
+
     while(true){
         cout << "Idade: ";
-        cin >> idade;
-        if(cin.fail()){
-            cout << "[ERRO] Idade invalida! Informe um numero inteiro.\n";
-            cin.clear();
-            cin.ignore(1000, '\n');
-        } else if(idade <= 0){
-            cout << "[ERRO] Idade invalida! Deve ser maior que zero.\n";
-        } else{
-            cin.ignore();
+        getline(cin, idadeStr);
+
+        if(idadeStr.empty()){
+        cout << "[ERRO] Idade nao pode ser vazia!\n";
+        continue;
+    }
+        bool soNumero = true;
+        for(char c : idadeStr){
+        if(c < '0' || c > '9'){
+            soNumero = false;
             break;
         }
     }
+        if(!soNumero){
+        cout << "[ERRO] Digite apenas numeros!\n";
+        continue;
+    }
+        idade = stoi(idadeStr);
+        if(idade <= 0){
+            cout << "[ERRO] Idade invalida!\n";
+            continue;
+    }
+    break;
+}
 
     // Validacao de CPF (original)
     while(true){
