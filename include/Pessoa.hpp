@@ -20,6 +20,7 @@ public:
     string getPessoa();
     int getIdade();
     string getNome();
+    string getCpf();
 };
 
 #endif

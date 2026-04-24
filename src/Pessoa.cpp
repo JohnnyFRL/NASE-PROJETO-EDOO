@@ -19,3 +19,7 @@ int Pessoa::getIdade(){
 string Pessoa::getNome(){
     return nome;
 }
+
+string Pessoa::getCpf(){
+    return cpf;
+}

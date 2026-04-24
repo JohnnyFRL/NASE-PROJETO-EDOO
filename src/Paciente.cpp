@@ -74,7 +74,7 @@ void Paciente::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
                 mostrarHistorico();
                 break;
             case 3:
-                cout << getPaciente() << endl;
+                cout << getDadosBasicos() << endl;
                 break; 
 
             case 0:
@@ -176,4 +176,14 @@ bool Paciente::estaNaFila(){
 
 void Paciente::setEmFila(bool valor){
     emFila = valor;
+}
+string Paciente::getDadosBasicos(){
+    string info = "Nome: " + getNome();
+    info += "\nIdade: " + to_string(getIdade());
+    info += "\nCPF: " + getCpf();
+    info += "\nCurso: " + curso;
+    info += "\nEmail: " + email;
+    info += "\nStatus: " + getStatus();
+
+    return info;
 }

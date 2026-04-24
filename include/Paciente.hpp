@@ -58,5 +58,6 @@ public:
     bool temSolicitacao; // correção de bug de duplicado na triagem
     bool estaNaFila();
     void setEmFila(bool valor);
+    string getDadosBasicos();
 };
 #endif
