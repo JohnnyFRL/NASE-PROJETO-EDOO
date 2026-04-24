@@ -33,7 +33,7 @@ int main(){
             if(u != nullptr){
                 u->menu(usuarios, fila);
             } else {
-                cout << "Login invalido\n";
+                cout << "[ERRO] Login ou senha invalidos\n";
             }
         }
     }while(opcao != 0);
