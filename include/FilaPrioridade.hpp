@@ -11,6 +11,7 @@ private:
     queue<Paciente*> filaAlta;
     queue<Paciente*> filaMedia;
     queue<Paciente*> filaBaixa;
+    queue<Paciente*> filaMuitoBaixa;
 
 public:
  void adicionarPaciente(Paciente* p);
