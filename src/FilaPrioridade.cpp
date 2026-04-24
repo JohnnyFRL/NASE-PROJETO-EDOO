@@ -4,6 +4,11 @@
 using namespace std;
 
 void FilaPrioridade::adicionarPaciente(Paciente* p) {
+    if(p->estaNaFila()){
+       cout << "Paciente ja esta na fila!\n";
+       return;
+    }
+
     if (p->getTriagem() == nullptr) {
         cout << "Paciente sem triagem, nao pode ser adicionado a fila.\n";
         return;
@@ -30,6 +35,7 @@ void FilaPrioridade::adicionarPaciente(Paciente* p) {
     else{
         filaBaixa.push(p);
     }
+    p->setEmFila(true);
 }
 
  Paciente * FilaPrioridade::chamarProximo() {

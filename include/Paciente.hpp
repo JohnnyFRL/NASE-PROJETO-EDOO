@@ -30,6 +30,7 @@ private:
     vector<string> historicoSolicitacoes; // aluno vai ter um historico de solicitacoes de consulta, para o funcionario poder avaliar se o paciente tem um padrao de solicitacao que pode indicar abuso do sistema
     string descricaoSolicitacao;
     Triagem* triagem; // Associação com a classe Triagem
+    bool emFila;
     
 public:
     Paciente(string nome, int idade, string cpf, string telefone, string endereco, string curso, string email, 
@@ -55,5 +56,7 @@ public:
     void mostrarHistorico();
     bool jaFezTriagem; // para evitar que o paciente faça triagem mais de uma vez e fique com múltiplas triagens ativas, o que causava um bug na hora de finalizar o atendimento, já que o sistema só atualizava o status do paciente para "atendido" na última triagem feita, e as outras ficavam ativas, fazendo com que o paciente não pudesse pedir uma nova consulta depois de finalizar a primeira, já que o sistema achava que ele ainda tinha uma triagem ativa
     bool temSolicitacao; // correção de bug de duplicado na triagem
+    bool estaNaFila();
+    void setEmFila(bool valor);
 };
 #endif

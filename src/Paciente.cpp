@@ -12,6 +12,7 @@ Paciente::Paciente(string nome, int idade, string cpf, string telefone, string e
     this->status = NAO_VALIDADO;
     this->triagem = nullptr;
     this->temSolicitacao = false;
+    this->emFila = false;
     this->jaFezTriagem = false;
 }
 
@@ -87,6 +88,10 @@ void Paciente::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
     }while(opcao != 0); 
 }
 void Paciente::solicitarConsulta(){
+    if(emFila){
+    cout << "voce esta na fila de atendimento.\n";
+    return;
+}
     if(!jaFezTriagem){
     cout << "Voce precisa passar pela triagem inicial primeiro.\n";
     return;
@@ -163,4 +168,12 @@ void Paciente::mostrarHistorico(){
     for(string h : historicoSolicitacoes){
         cout << "- " << h << endl;
     }
+}
+
+bool Paciente::estaNaFila(){
+    return emFila;
+}
+
+void Paciente::setEmFila(bool valor){
+    emFila = valor;
 }

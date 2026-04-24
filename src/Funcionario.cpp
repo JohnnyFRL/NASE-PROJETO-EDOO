@@ -50,6 +50,7 @@ void Funcionario::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
             Paciente* p = fila.chamarProximo();
             if(p != nullptr){
                 cout << "Chamando paciente...\n";
+                p->setEmFila(false);
                 p->finalizarAtendimento(); // para atualizar paciente e pode pedir uma nova consulta depois.
             } else {
                 cout << "Nenhum paciente na fila.\n";
