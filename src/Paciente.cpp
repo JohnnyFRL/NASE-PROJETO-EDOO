@@ -1,14 +1,13 @@
 #include "FilaPrioridade.hpp"
 #include "Paciente.hpp"
 
-
 Paciente::Paciente(string nome, int idade, string cpf, string telefone, string endereco, string curso, string email, bool alunoUFPE, bool bolsistaPROAES,
-    string login, string senha)
-    : Pessoa(nome, idade, cpf, telefone, endereco), Usuario(login, senha) {
+string login, string senha)
+: Pessoa(nome, idade, cpf, telefone, endereco), Usuario(login, senha) {
     this->curso = curso;
     this->email = email;
     this->alunoUFPE= alunoUFPE;
-    this->bolsistaPROAES= bolsistaPROAES; 
+    this->bolsistaPROAES= bolsistaPROAES;
     this->status = NAO_VALIDADO;
     this->triagem = nullptr;
     this->temSolicitacao = false;
@@ -16,17 +15,42 @@ Paciente::Paciente(string nome, int idade, string cpf, string telefone, string e
     this->jaFezTriagem = false;
 }
 
+// ATUALIZADO: Saida para o Funcionario
 string Paciente::getPaciente(){
-    string info = "Nome: " + getNome(); // direto da classe Pessoa
-     info += " | Login: " + getLogin();
-    info += " | Status: " + getStatus();
-    if(triagem != nullptr){
-        info += " | " + triagem->getResumo();
-    }
-    for(string h : historicoSolicitacoes){
-    info += "\n  - " + h;
-}
+    string info = "\n--- HISTORICO: " + getNome() + " (Login: " + getLogin() + ") ---\n";
+    info += "Status: " + getStatus() + "\n\n";
+    info += "[ REGISTROS ]\n";
 
+    if(triagem != nullptr){
+        string resumo = triagem->getResumo();
+        
+        
+        size_t posTipo = resumo.find(" | Tipo");   // Limpa a string cortando a parte do " | Tipo: Triagem Inicial" que vinha grudada
+        if(posTipo != string::npos) {
+            resumo = resumo.substr(0, posTipo);
+        }
+        
+        int p = triagem->getPrioridade();
+        if(p == 1) resumo += " (Alta)";
+        else if(p == 2) resumo += " (Média)";
+        else if(p == 3) resumo += " (Baixa)";
+
+        info += "> Triagem Inicial\n";
+        info += "  " + resumo + "\n";
+    }
+
+    if(historicoSolicitacoes.empty() && triagem == nullptr){
+        info += "Nenhum registro encontrado.\n";
+    } else {
+        for(size_t i = 0; i < historicoSolicitacoes.size(); i++){
+            if(historicoSolicitacoes[i].find("Triagem inicial") == string::npos && 
+               historicoSolicitacoes[i].find("Tipo:") == string::npos){
+                info += "> " + historicoSolicitacoes[i] + "\n";
+            }
+        }
+    }
+    
+    info += "---------------------------------------------------------\n";
     return info;
 }
 
@@ -75,7 +99,7 @@ void Paciente::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
                 break;
             case 3:
                 cout << getDadosBasicos() << endl;
-                break; 
+                break;
 
             case 0:
                 cout << "Saindo...\n";
@@ -85,21 +109,22 @@ void Paciente::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
                 cout << "Opcao invalida!\n";
         }
 
-    }while(opcao != 0); 
+    }while(opcao != 0);
 }
+
 void Paciente::solicitarConsulta(){
     if(emFila){
-    cout << "voce esta na fila de atendimento.\n";
-    return;
-}
+        cout << "voce esta na fila de atendimento.\n";
+        return;
+    }
     if(!jaFezTriagem){
-    cout << "Voce precisa passar pela triagem inicial primeiro.\n";
-    return;
-} // pra não duplicar a triagem, já que o paciente só pode solicitar consulta depois de ter sido triado, ou seja, ter uma triagem associada a ele
+        cout << "Voce precisa passar pela triagem inicial primeiro.\n";
+        return;
+    } // pra não duplicar a triagem, já que o paciente só pode solicitar consulta depois de ter sido triado, ou seja, ter uma triagem associada a ele
     if(temSolicitacao){
-    cout << "Voce ja possui uma solicitacao em andamento.\n";
-    return; // não pode ter outra solicitacao
-}
+        cout << "Voce ja possui uma solicitacao em andamento.\n";
+        return; // não pode ter outra solicitacao
+    }
     string sintomas;
     cin.ignore();
     cout << "Descreva seus sintomas: ";
@@ -152,22 +177,49 @@ void Paciente::finalizarAtendimento(){
     descricaoSolicitacao = "";
 
     adicionarHistorico(
-        "Atendimento finalizado | Ultima prioridade: " + 
+        "Atendimento finalizado | Ultima prioridade: " +
         to_string(triagem->getPrioridade())
     );
 
     // NÃO apaga triagem → mantém histórico
 }
 
+// ATUALIZADO: Saida para o proprio Paciente no menu dele
 void Paciente::mostrarHistorico(){
-    cout << "\n--- HISTORICO DO PACIENTE ---\n";
-    if(historicoSolicitacoes.empty()){
+    cout << "\n--- HISTORICO: " << getNome() << " (Login: " << getLogin() << ") ---\n";
+    cout << "Status: " << getStatus() << "\n\n";
+    
+    cout << "[ REGISTROS ]\n";
+
+    if(triagem != nullptr){
+        string resumo = triagem->getResumo();
+        
+        size_t posTipo = resumo.find(" | Tipo");
+        if(posTipo != string::npos) {
+            resumo = resumo.substr(0, posTipo);
+        }
+        
+        int p = triagem->getPrioridade();
+        if(p == 1) resumo += " (Alta)";
+        else if(p == 2) resumo += " (Média)";
+        else if(p == 3) resumo += " (Baixa)";
+
+        cout << "> Triagem Inicial\n";
+        cout << "  " << resumo << "\n";
+    }
+
+    if(historicoSolicitacoes.empty() && triagem == nullptr){
         cout << "Nenhum registro encontrado.\n";
-        return;
+    } else {
+        for(size_t i = 0; i < historicoSolicitacoes.size(); i++){
+            if(historicoSolicitacoes[i].find("Triagem inicial") == string::npos && 
+               historicoSolicitacoes[i].find("Tipo:") == string::npos){
+                cout << "> " << historicoSolicitacoes[i] << "\n";
+            }
+        }
     }
-    for(string h : historicoSolicitacoes){
-        cout << "- " << h << endl;
-    }
+    
+    cout << "---------------------------------------------------------\n\n";
 }
 
 bool Paciente::estaNaFila(){
@@ -177,6 +229,7 @@ bool Paciente::estaNaFila(){
 void Paciente::setEmFila(bool valor){
     emFila = valor;
 }
+
 string Paciente::getDadosBasicos(){
     string info = "Nome: " + getNome();
     info += "\nIdade: " + to_string(getIdade());

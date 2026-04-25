@@ -1,5 +1,5 @@
 #include "Validacao.hpp"
-#include <cctype>   // isalpha, isupper, islower, isdigit
+#include <cctype>   
 #include <iostream>
 
 using namespace std;
