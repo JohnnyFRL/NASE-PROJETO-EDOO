@@ -1,5 +1,6 @@
 #include "FilaPrioridade.hpp"
 #include "Paciente.hpp"
+#include "Validacao.hpp"
 
 
 Paciente::Paciente(string nome, int idade, string cpf, string telefone, string endereco, string curso, string email, bool alunoUFPE, bool bolsistaPROAES,
@@ -28,6 +29,11 @@ string Paciente::getPaciente(){
 }
 
     return info;
+}
+
+// Destrutor: libera a memoria alocada dinamicamente para a triagem
+Paciente::~Paciente(){
+    delete triagem;
 }
 
 void Paciente::validar(){
@@ -115,6 +121,7 @@ Triagem* Paciente::getTriagem(){
 }
 
 void Paciente::setTriagem(Triagem* t){
+    delete triagem; // evita vazamento ao substituir triagem existente
     this->triagem = t;
 }
 
@@ -181,9 +188,146 @@ string Paciente::getDadosBasicos(){
     string info = "Nome: " + getNome();
     info += "\nIdade: " + to_string(getIdade());
     info += "\nCPF: " + getCpf();
+    info += "\nTelefone: " + getTelefone();
+    info += "\nEndereco: " + getEndereco();
     info += "\nCurso: " + curso;
     info += "\nEmail: " + email;
     info += "\nStatus: " + getStatus();
 
     return info;
+}
+
+void Paciente::setCurso(string novoCurso){
+    curso = novoCurso;
+}
+
+void Paciente::setEmail(string novoEmail){
+    email = novoEmail;
+}
+
+void Paciente::setBolsistaPROAES(bool valor){
+    bolsistaPROAES = valor;
+    validar();
+}
+
+void Paciente::editarDados(vector<Usuario*>& usuarios){
+    int opcao;
+    string erro, novoValor;
+
+    do {
+        cout << "\n--- EDITAR DADOS: " << getNome() << " ---\n";
+        cout << getDadosBasicos() << "\n";
+        cout << "\n1. Nome\n";
+        cout << "2. Idade\n";
+        cout << "3. Telefone\n";
+        cout << "4. Endereco\n";
+        cout << "5. Curso\n";
+        cout << "6. Email\n";
+        cout << "7. Bolsista PROAES\n";
+        cout << "0. Voltar\n";
+        cout << "Escolha: ";
+        cin >> opcao;
+        cin.ignore();
+
+        switch(opcao){
+            case 1:
+                while(true){
+                    cout << "Novo nome: ";
+                    getline(cin, novoValor);
+                    if(Validacao::validarNome(novoValor, erro)){
+                        setNome(novoValor);
+                        cout << "Nome atualizado.\n";
+                        break;
+                    }
+                    cout << "[ERRO] " << erro << "\n";
+                }
+                break;
+
+            case 2: {
+                string idadeStr;
+                while(true){
+                    cout << "Nova idade: ";
+                    getline(cin, idadeStr);
+                    bool soNumero = true;
+                    for(int i = 0; i < (int)idadeStr.length(); i++){
+                        if(idadeStr[i] < '0' || idadeStr[i] > '9'){
+                            soNumero = false;
+                            break;
+                        }
+                    }
+                    if(!soNumero || idadeStr.empty()){
+                        cout << "[ERRO] Digite apenas numeros!\n";
+                        continue;
+                    }
+                    int novaIdade = stoi(idadeStr);
+                    if(novaIdade <= 0 || novaIdade > 130){
+                        cout << "[ERRO] Idade invalida!\n";
+                        continue;
+                    }
+                    setIdade(novaIdade);
+                    cout << "Idade atualizada.\n";
+                    break;
+                }
+                break;
+            }
+
+            case 3:
+                while(true){
+                    cout << "Novo telefone: ";
+                    getline(cin, novoValor);
+                    if(Validacao::validarTelefone(novoValor, erro)){
+                        setTelefone(novoValor);
+                        cout << "Telefone atualizado.\n";
+                        break;
+                    }
+                    cout << "[ERRO] " << erro << "\n";
+                }
+                break;
+
+            case 4:
+                cout << "Novo endereco: ";
+                getline(cin, novoValor);
+                setEndereco(novoValor);
+                cout << "Endereco atualizado.\n";
+                break;
+
+            case 5:
+                cout << "Novo curso: ";
+                getline(cin, novoValor);
+                setCurso(novoValor);
+                cout << "Curso atualizado.\n";
+                break;
+
+            case 6:
+                while(true){
+                    cout << "Novo email: ";
+                    getline(cin, novoValor);
+                    if(Validacao::validarEmail(novoValor, erro)){
+                        setEmail(novoValor);
+                        cout << "Email atualizado.\n";
+                        break;
+                    }
+                    cout << "[ERRO] " << erro << "\n";
+                }
+                break;
+
+            case 7: {
+                char resp;
+                cout << "E bolsista PROAES? (s/n): ";
+                cin >> resp;
+                cin.ignore();
+                setBolsistaPROAES(resp == 's' || resp == 'S');
+                cout << "Status atualizado para: " << getStatus() << "\n";
+                break;
+            }
+
+            case 0:
+                cout << "Voltando...\n";
+                break;
+
+            default:
+                cout << "Opcao invalida!\n";
+        }
+
+    } while(opcao != 0);
 }

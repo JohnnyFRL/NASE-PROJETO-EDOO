@@ -23,6 +23,7 @@ void Funcionario::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
         cout << "5. Mostrar status das filas" << endl;
         cout << "6. Mostrar ordem das filas" << endl;
         cout << "7. Ver solicitacoes" << endl;
+        cout << "8. Editar dados de paciente" << endl;
         cout << "0. Voltar" << endl;
         cout << "Escolha uma opcao: ";
         cin >> opcao;
@@ -151,6 +152,26 @@ void Funcionario::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
         case 0:
             cout << "Voltando ao menu...\n";
             break;
+
+        case 8: {
+            string loginBusca;
+            cout << "\nLogin do paciente: ";
+            cin >> loginBusca;
+
+            bool encontrado = false;
+            for(int i = 0; i < (int)usuarios.size(); i++){
+                Paciente* p = dynamic_cast<Paciente*>(usuarios[i]);
+                if(p && p->getLogin() == loginBusca){
+                    p->editarDados(usuarios);
+                    encontrado = true;
+                    break;
+                }
+            }
+            if(!encontrado){
+                cout << "Paciente nao encontrado.\n";
+            }
+            break;
+        }
 
         default:
             cout << "Opcao invalida!\n";

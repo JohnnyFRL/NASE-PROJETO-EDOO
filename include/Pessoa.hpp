@@ -21,6 +21,12 @@ public:
     int getIdade();
     string getNome();
     string getCpf();
+    string getTelefone();
+    string getEndereco();
+    void setNome(string novoNome);
+    void setIdade(int novaIdade);
+    void setTelefone(string novoTelefone);
+    void setEndereco(string novoEndereco);
 };
 
 #endif

@@ -35,6 +35,7 @@ private:
 public:
     Paciente(string nome, int idade, string cpf, string telefone, string endereco, string curso, string email, 
         bool alunoUFPE, bool bolsistaPROAES, string login, string senha);
+    ~Paciente(); // libera a memoria do ponteiro triagem
     string getPaciente();
     void validar();
     string getStatus(); // status do paciente como valido ou não valido para triagem
@@ -59,5 +60,9 @@ public:
     bool estaNaFila();
     void setEmFila(bool valor);
     string getDadosBasicos();
+    void editarDados(vector<Usuario*>& usuarios);
+    void setCurso(string novoCurso);
+    void setEmail(string novoEmail);
+    void setBolsistaPROAES(bool valor);
 };
 #endif

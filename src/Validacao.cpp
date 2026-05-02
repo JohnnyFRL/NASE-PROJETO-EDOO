@@ -1,19 +1,11 @@
 #include "Validacao.hpp"
-#include <cctype>   // isalpha, isupper, islower, isdigit
+#include <cctype>  
 #include <iostream>
 
 using namespace std;
 
-// ============================================================
 // [T1] Validacao de Nome
-// Regras:
-//   - Minimo 3 caracteres no total.
-//   - Apenas letras (incluindo caracteres acentuados >= 128),
-//     espacos simples permitidos.
-//   - Deve conter pelo menos duas palavras (nome + sobrenome).
-//   - Nao pode comecar nem terminar com espaco.
-//   - Nao pode ter espacos consecutivos.
-// ============================================================
+
 bool Validacao::validarNome(const string& nome, string& erro) {
 
     if (nome.length() < 3) {
@@ -68,15 +60,8 @@ bool Validacao::validarNome(const string& nome, string& erro) {
     return true;
 }
 
-// ============================================================
 // [T2] Validacao de Senha Forte
-// Regras:
-//   - Minimo 8 caracteres.
-//   - Pelo menos 1 letra maiuscula.
-//   - Pelo menos 1 letra minuscula.
-//   - Pelo menos 1 digito (0-9).
-//   - Pelo menos 1 caractere especial do conjunto: !@#$%^&*()_+-=[]{}|;':",./<>?
-// ============================================================
+
 bool Validacao::validarSenhaForte(const string& senha, string& erro) {
 
     if (senha.length() < 8) {
@@ -132,13 +117,9 @@ bool Validacao::validarSenhaForte(const string& senha, string& erro) {
     return true;
 }
 
-// ============================================================
+
 // [T3] Validacao de Login Unico
-// Regras:
-//   - Minimo 3 caracteres.
-//   - Nao pode conter espacos.
-//   - Nao pode ja existir entre os usuarios cadastrados.
-// ============================================================
+
 bool Validacao::validarLoginUnico(const string& login,
                                   const vector<Usuario*>& usuarios,
                                   string& erro) {
@@ -167,16 +148,9 @@ bool Validacao::validarLoginUnico(const string& login,
     return true;
 }
 
-// ============================================================
+
 // [T4] Validacao de E-mail
-// Regras:
-//   - Deve conter exatamente um '@'.
-//   - A parte local (antes do '@') nao pode estar vazia.
-//   - O dominio (apos o '@') nao pode estar vazio.
-//   - O dominio deve conter pelo menos um ponto.
-//   - O dominio nao pode comecar nem terminar com ponto.
-//   - Nao pode haver pontos consecutivos.
-// ============================================================
+
 bool Validacao::validarEmail(const string& email, string& erro) {
 
     if (email.length() == 0) {
@@ -241,15 +215,9 @@ bool Validacao::validarEmail(const string& email, string& erro) {
     return true;
 }
 
-// ============================================================
+
 // [T5] Validacao de Telefone Brasileiro
-// Regras:
-//   - Aceita apenas digitos, parenteses, hifens e espacos.
-//   - Apos extrair somente os digitos, o total deve ser
-//     10 (fixo) ou 11 (celular) digitos.
-//   - O DDD (primeiros 2 digitos) deve estar entre 11 e 99.
-//   - Para 11 digitos (celular), o 3o digito deve ser 9.
-// ============================================================
+
 bool Validacao::validarTelefone(const string& telefone, string& erro) {
 
     if (telefone.length() == 0) {
