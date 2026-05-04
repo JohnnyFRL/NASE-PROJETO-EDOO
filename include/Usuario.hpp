@@ -15,6 +15,7 @@ private:
 public:
     Usuario(string login, string senha);
     string getLogin();
+    string getSenha();
     bool autenticar(string senha);
     virtual void menu(vector<Usuario*>& usuarios, FilaPrioridade& fila) = 0; // pra ser usado nas classes filhas de forma obrigatoria
     virtual ~Usuario() {} // garantir limpeza de memoria para classes filhas

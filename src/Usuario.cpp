@@ -9,6 +9,10 @@ string Usuario::getLogin(){
     return login;
 }
 
+string Usuario::getSenha(){
+    return senha;
+}
+
 bool Usuario::autenticar(string senha){
     return this-> senha == senha;
 }
