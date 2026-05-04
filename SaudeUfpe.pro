@@ -38,6 +38,7 @@ HEADERS += \
     CadastroDialog.h \
     MenuPacienteWindow.h \
     MenuFuncionarioWindow.h \
+    NaseStyle.h \
     TriagemDialog.h \
     SolicitacoesDialog.h
 -e 
