@@ -210,6 +210,7 @@ void Paciente::setBolsistaPROAES(bool valor){
     validar();
 }
 
+
 void Paciente::editarDados(vector<Usuario*>& usuarios){
     int opcao;
     string erro, novoValor;
@@ -331,3 +332,8 @@ void Paciente::editarDados(vector<Usuario*>& usuarios){
 
     } while(opcao != 0);
 }
+
+void Paciente::setDescricaoSolicitacao(string desc){
+    descricaoSolicitacao = desc;
+}
+

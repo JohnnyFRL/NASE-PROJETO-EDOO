@@ -64,5 +64,8 @@ public:
     void setCurso(string novoCurso);
     void setEmail(string novoEmail);
     void setBolsistaPROAES(bool valor);
+    void setDescricaoSolicitacao(string desc);
+
+
 };
 #endif
