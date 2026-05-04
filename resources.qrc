@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource prefix="/">
+    <file>nase_bg.png</file>
+    <file>nase_avatar.png</file>
+  </qresource>
+</RCC>
