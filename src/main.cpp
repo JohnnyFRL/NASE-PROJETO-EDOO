@@ -224,6 +224,7 @@ void realizarTriagem(vector<Usuario*>& usuarios, FilaPrioridade& fila){
             Triagem* t = new Triagem(sintomas, "Triagem Inicial", prioridade);
             p->setTriagem(t);
             fila.adicionarPaciente(p);
+            p->setEmFila(true); // para sicronizar estado e manter consistencia
             p->adicionarHistorico(
            "Triagem inicial: Sintomas: " + sintomas +
            " | Tipo: " + tipo + 

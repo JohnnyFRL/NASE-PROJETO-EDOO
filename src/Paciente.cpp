@@ -155,6 +155,7 @@ vector<string> Paciente::getHistoricoSolicitacoes(){
 
 void Paciente::finalizarAtendimento(){
     limparSolicitacao();
+    setEmFila(false); // paciente sai da fila
 
     adicionarHistorico(
         "Atendimento finalizado | Ultima prioridade: " + 
