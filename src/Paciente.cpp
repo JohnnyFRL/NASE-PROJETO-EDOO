@@ -98,11 +98,11 @@ void Paciente::solicitarConsulta(){
     cout << "voce esta na fila de atendimento.\n";
     return;
 }
-    if(!jaFezTriagem){
+    if(!fezTriagem()){
     cout << "Voce precisa passar pela triagem inicial primeiro.\n";
     return;
 } // pra não duplicar a triagem, já que o paciente só pode solicitar consulta depois de ter sido triado, ou seja, ter uma triagem associada a ele
-    if(temSolicitacao){
+    if(possuiSolicitacao()){
     cout << "Voce ja possui uma solicitacao em andamento.\n";
     return; // não pode ter outra solicitacao
 }
@@ -111,8 +111,7 @@ void Paciente::solicitarConsulta(){
     cout << "Descreva seus sintomas: ";
     getline(cin, sintomas);
 
-    this->descricaoSolicitacao = sintomas;
-    this->temSolicitacao = true;
+    criarSolicitacao(sintomas);
     cout << "Solicitacao enviada! Aguarde avaliacao.\n";
 }
 
@@ -155,8 +154,8 @@ vector<string> Paciente::getHistoricoSolicitacoes(){
 }
 
 void Paciente::finalizarAtendimento(){
-    temSolicitacao = false;
-    descricaoSolicitacao = "";
+    limparSolicitacao();
+    setEmFila(false); // paciente sai da fila
 
     adicionarHistorico(
         "Atendimento finalizado | Ultima prioridade: " + 
@@ -246,28 +245,16 @@ void Paciente::editarDados(vector<Usuario*>& usuarios){
 
             case 2: {
                 string idadeStr;
+                int novaIdade;
                 while(true){
                     cout << "Nova idade: ";
                     getline(cin, idadeStr);
-                    bool soNumero = true;
-                    for(int i = 0; i < (int)idadeStr.length(); i++){
-                        if(idadeStr[i] < '0' || idadeStr[i] > '9'){
-                            soNumero = false;
-                            break;
-                        }
+                    if(Validacao::validarIdade(idadeStr, novaIdade, erro)){
+                        setIdade(novaIdade);
+                        cout << "Idade atualizada.\n";
+                        break;
                     }
-                    if(!soNumero || idadeStr.empty()){
-                        cout << "[ERRO] Digite apenas numeros!\n";
-                        continue;
-                    }
-                    int novaIdade = stoi(idadeStr);
-                    if(novaIdade <= 0 || novaIdade > 130){
-                        cout << "[ERRO] Idade invalida!\n";
-                        continue;
-                    }
-                    setIdade(novaIdade);
-                    cout << "Idade atualizada.\n";
-                    break;
+                    cout << "[ERRO]" << erro << "\n";
                 }
                 break;
             }
@@ -335,5 +322,19 @@ void Paciente::editarDados(vector<Usuario*>& usuarios){
 
 void Paciente::setDescricaoSolicitacao(string desc){
     descricaoSolicitacao = desc;
+}
+
+bool Paciente::fezTriagem(){
+    return jaFezTriagem;
+}
+
+void Paciente::criarSolicitacao(string descricao){
+    this->descricaoSolicitacao = descricao;
+    this->temSolicitacao = true;
+}
+
+void Paciente::marcarTriagemRealizada(){
+    jaFezTriagem = true;
+
 }
 
