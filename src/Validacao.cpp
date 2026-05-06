@@ -263,3 +263,29 @@ bool Validacao::validarTelefone(const string& telefone, string& erro) {
 
     return true;
 }
+
+// [T6] Validacao de Idade
+
+bool Validacao::validarIdade(const string& idadeStr, int& idadeOut, string& erro) {
+
+    if (idadeStr.empty()) {
+        erro = "Idade nao pode ser vazia.";
+        return false;
+    }
+
+    for (int i = 0; i < (int)idadeStr.length(); i++) {
+        if (idadeStr[i] < '0' || idadeStr[i] > '9') {
+            erro = "Idade deve conter apenas numeros.";
+            return false;
+        }
+    }
+
+    idadeOut = stoi(idadeStr);
+
+    if (idadeOut <= 0 || idadeOut > 100) {
+        erro = "Idade invalida! Informe um valor entre 1 e 100.";
+        return false;
+    }
+
+    return true;
+}

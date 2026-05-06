@@ -244,28 +244,16 @@ void Paciente::editarDados(vector<Usuario*>& usuarios){
 
             case 2: {
                 string idadeStr;
+                int novaIdade;
                 while(true){
                     cout << "Nova idade: ";
                     getline(cin, idadeStr);
-                    bool soNumero = true;
-                    for(int i = 0; i < (int)idadeStr.length(); i++){
-                        if(idadeStr[i] < '0' || idadeStr[i] > '9'){
-                            soNumero = false;
-                            break;
-                        }
+                    if(Validacao::validarIdade(idadeStr, novaIdade, erro)){
+                        setIdade(novaIdade);
+                        cout << "Idade atualizada.\n";
+                        break;
                     }
-                    if(!soNumero || idadeStr.empty()){
-                        cout << "[ERRO] Digite apenas numeros!\n";
-                        continue;
-                    }
-                    int novaIdade = stoi(idadeStr);
-                    if(novaIdade <= 0 || novaIdade > 130){
-                        cout << "[ERRO] Idade invalida!\n";
-                        continue;
-                    }
-                    setIdade(novaIdade);
-                    cout << "Idade atualizada.\n";
-                    break;
+                    cout << "[ERRO]" << erro << "\n";
                 }
                 break;
             }
