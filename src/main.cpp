@@ -37,6 +37,10 @@ int main(){
             }
         }
     }while(opcao != 0);
+    
+    for(int i = 0; i < (int)usuarios.size(); i++){    //libera a memoria de todos os usuarios alocados com new
+        delete usuarios[i];
+    }
     return 0;
 }
 
