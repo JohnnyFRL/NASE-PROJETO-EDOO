@@ -98,11 +98,11 @@ void Paciente::solicitarConsulta(){
     cout << "voce esta na fila de atendimento.\n";
     return;
 }
-    if(!jaFezTriagem){
+    if(!fezTriagem()){
     cout << "Voce precisa passar pela triagem inicial primeiro.\n";
     return;
 } // pra não duplicar a triagem, já que o paciente só pode solicitar consulta depois de ter sido triado, ou seja, ter uma triagem associada a ele
-    if(temSolicitacao){
+    if(possuiSolicitacao()){
     cout << "Voce ja possui uma solicitacao em andamento.\n";
     return; // não pode ter outra solicitacao
 }
@@ -111,8 +111,7 @@ void Paciente::solicitarConsulta(){
     cout << "Descreva seus sintomas: ";
     getline(cin, sintomas);
 
-    this->descricaoSolicitacao = sintomas;
-    this->temSolicitacao = true;
+    criarSolicitacao(sintomas);
     cout << "Solicitacao enviada! Aguarde avaliacao.\n";
 }
 
@@ -155,8 +154,7 @@ vector<string> Paciente::getHistoricoSolicitacoes(){
 }
 
 void Paciente::finalizarAtendimento(){
-    temSolicitacao = false;
-    descricaoSolicitacao = "";
+    limparSolicitacao();
 
     adicionarHistorico(
         "Atendimento finalizado | Ultima prioridade: " + 
@@ -335,5 +333,19 @@ void Paciente::editarDados(vector<Usuario*>& usuarios){
 
 void Paciente::setDescricaoSolicitacao(string desc){
     descricaoSolicitacao = desc;
+}
+
+bool Paciente::fezTriagem(){
+    return jaFezTriagem;
+}
+
+void Paciente::criarSolicitacao(string descricao){
+    this->descricaoSolicitacao = descricao;
+    this->temSolicitacao = true;
+}
+
+void Paciente::marcarTriagemRealizada(){
+    jaFezTriagem = true;
+
 }
 
