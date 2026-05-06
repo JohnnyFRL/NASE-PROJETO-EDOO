@@ -219,7 +219,7 @@ void realizarTriagem(vector<Usuario*>& usuarios, FilaPrioridade& fila){
     for(int i = 0; i < (int)usuarios.size(); i++){
         Paciente* p = dynamic_cast<Paciente*>(usuarios[i]);
         if(p && p->getLogin() == login){
-            if(p->jaFezTriagem){
+            if(p->fezTriagem()){
     cout << "Paciente ja passou pela triagem inicial.\n";
     return;
 }
@@ -248,8 +248,7 @@ void realizarTriagem(vector<Usuario*>& usuarios, FilaPrioridade& fila){
            " | Tipo: " + tipo + 
            " | Prioridade: " + to_string(prioridade)
              );
-            p->jaFezTriagem = true;
-            p->temSolicitacao = false; //correcao do bug de paciente duplicado na triagem
+            p->marcarTriagemRealizada();
 
             p->limparSolicitacao();
             cout << "\nTriagem realizada com sucesso!\n";
