@@ -1,15 +1,18 @@
 #include "Funcionario.hpp"
 #include "Paciente.hpp"
+#include "Database.hpp"
 #include <iostream>
 #include <vector>
 
-void realizarTriagem(vector<Usuario*>& usuarios, FilaPrioridade& fila);
-void cadastrarPacienteSistema(vector<Usuario*>& usuarios);
+void realizarTriagem(Database* db, vector<Usuario*>& usuarios, FilaPrioridade& fila);
+void cadastrarPacienteSistema(Database* db, vector<Usuario*>& usuarios);
 
 using namespace std;
 
-Funcionario::Funcionario(string login, string senha)
-    : Usuario(login, senha) {}
+Funcionario::Funcionario(Database* db, string login, string senha)
+    : Usuario(login, senha) {
+    this->db = db;
+}
 
 void Funcionario::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
     int opcao;
@@ -31,7 +34,7 @@ void Funcionario::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
         switch(opcao){
 
         case 1:
-            cadastrarPacienteSistema(usuarios);
+            cadastrarPacienteSistema(db, usuarios);
             break;
 
         case 2:
@@ -44,7 +47,7 @@ void Funcionario::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
             break;
 
         case 3:
-            realizarTriagem(usuarios, fila);
+            realizarTriagem(db, usuarios, fila);
             break;
 
         case 4: {
@@ -52,7 +55,7 @@ void Funcionario::menu(vector<Usuario*>& usuarios, FilaPrioridade& fila){
             if(p != nullptr){
                 cout << "Chamando paciente...\n";
                 p->setEmFila(false);
-                p->finalizarAtendimento(); // para atualizar paciente e pode pedir uma nova consulta depois.
+                p->finalizarAtendimento(); // para atualizar paciente e poder pedir uma nova consulta depois.
             } else {
                 cout << "Nenhum paciente na fila.\n";
             }

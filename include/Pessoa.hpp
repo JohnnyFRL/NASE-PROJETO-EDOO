@@ -2,13 +2,11 @@
 #define PESSOA_HPP
 
 #include <string>
-#include <vector>
-#include <iostream>
-
 using namespace std;
 
 class Pessoa{
 private:
+    int id; // ID no banco de dados
     int idade;
     string nome;
     string cpf;
@@ -16,17 +14,22 @@ private:
     string endereco;
 
 public:
-    Pessoa(string nome, int idade,string cpf, string telefone, string endereco);
-    string getPessoa();
-    int getIdade();
-    string getNome();
-    string getCpf();
-    string getTelefone();
-    string getEndereco();
-    void setNome(string novoNome);
+    Pessoa(const string& nome, int idade, const string& cpf, const string& telefone, const string& endereco);
+    Pessoa(int id, const string& nome, int idade, const string& cpf, const string& telefone, const string& endereco);
+    virtual ~Pessoa() = default;
+
+    string getPessoa() const;
+    int getId() const;
+    void setId(int novoId);
+    int getIdade() const;
+    const string& getNome() const;
+    const string& getCpf() const;
+    const string& getTelefone() const;
+    const string& getEndereco() const;
+    void setNome(const string& novoNome);
     void setIdade(int novaIdade);
-    void setTelefone(string novoTelefone);
-    void setEndereco(string novoEndereco);
+    void setTelefone(const string& novoTelefone);
+    void setEndereco(const string& novoEndereco);
 };
 
 #endif

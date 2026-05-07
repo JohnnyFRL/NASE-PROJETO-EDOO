@@ -34,7 +34,7 @@ void FilaPrioridade::adicionarPaciente(Paciente* p) {
     }else if(prioridade == 3){
     filaBaixa.push(p);
     }else{
-        filaMuitoBaixa.push(p); // não bolsistas vão pra prioridade 4, que é a mais baixa
+        filaMuitoBaixa.push(p); // não bolsistas vão para prioridade 4, que é a mais baixa
     }
     p->setEmFila(true);
 }

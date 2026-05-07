@@ -7,28 +7,59 @@
 #include "Funcionario.hpp"
 #include "Triagem.hpp"
 #include "FilaPrioridade.hpp"
-#include "Validacao.hpp"   
+#include "Validacao.hpp"
+#include "Database.hpp"
 
 #include <limits>
 
 using namespace std;
-void cadastrarPacienteSistema(vector<Usuario*>& usuarios);
-Usuario* loginSistema(vector<Usuario*>& usuarios, FilaPrioridade& fila);
-void realizarTriagem(vector<Usuario*>& usuarios, FilaPrioridade& fila);
+
+void cadastrarPacienteSistema(Database* db, vector<Usuario*>& usuarios);
+Usuario* loginSistema(Database* db, vector<Usuario*>& usuarios, FilaPrioridade& fila);
+void realizarTriagem(Database* db, vector<Usuario*>& usuarios, FilaPrioridade& fila);
 
 int main(){
+    Database db("sistema_medico.db");
+
+    if (!db.initialize()) {
+        cerr << "Failed to initialize database!" << endl;
+        return 1;
+    }
+
     FilaPrioridade fila;
     vector<Usuario*> usuarios;
-    usuarios.push_back(new Funcionario("admin", "Admin@123"));
+
+    // Carregar dados já existentes na base de dados
+    auto pacientes = Paciente::loadFromDatabase(&db);
+    for (auto p : pacientes) {
+        usuarios.push_back(p);
+    }
+
+    // Criar login de Admin, caso não exista
+    if (!db.userExists("admin")) {
+        db.saveUser("admin", "Admin@123", "funcionario");
+    }
+
+    bool adminExists = false;
+    for (auto u : usuarios) {
+        if (u->getLogin() == "admin") {
+            adminExists = true;
+            break;
+        }
+    }
+    if (!adminExists) {
+        usuarios.push_back(new Funcionario(&db, "admin", "Admin@123"));
+    }
+
     int opcao;
-    
+
     do{
         cout << "\n1. Login\n0. Sair\n";
         cout << "\n Usuario de teste: admin / Admin@123\ndigite: ";
         cin >> opcao;
 
         if(opcao == 1){
-            Usuario* u = loginSistema(usuarios, fila);
+            Usuario* u = loginSistema(&db, usuarios, fila);
 
             if(u != nullptr){
                 u->menu(usuarios, fila);
@@ -45,7 +76,7 @@ int main(){
 }
 
 
-void cadastrarPacienteSistema(vector<Usuario*>& usuarios){
+void cadastrarPacienteSistema(Database* db, vector<Usuario*>& usuarios){
     string nome, cpf, telefone, endereco, curso, email;
     string numeros = "";
     int idade;
@@ -165,20 +196,23 @@ void cadastrarPacienteSistema(vector<Usuario*>& usuarios){
     cin >> souB;
     bolsistaPROAES = (souB == 's' || souB == 'S');
 
-    Paciente* novo = new Paciente(
-        nome, idade, cpf, telefone, endereco,
+    Paciente* novo = new Paciente(db, nome, idade, cpf, telefone, endereco,
         curso, email,
         alunoUFPE, bolsistaPROAES,
-        login, senha
-    );
+        login, senha);
     novo->validar();
 
-    usuarios.push_back(novo);
-
-    cout << "\nPaciente cadastrado com sucesso!" << endl;
+    // Salvar paciente na base de dados
+    if (novo->saveToDatabase()) {
+        usuarios.push_back(novo);
+        cout << "\nPaciente cadastrado com sucesso!" << endl;
+    } else {
+        cout << "\nErro ao salvar paciente no banco de dados!" << endl;
+        delete novo;
+    }
 }
 
-Usuario* loginSistema(vector<Usuario*>& usuarios, FilaPrioridade& fila){
+Usuario* loginSistema(Database* db, vector<Usuario*>& usuarios, FilaPrioridade& fila){
     string login, senha;
 
     cout << "Login: ";
@@ -187,16 +221,45 @@ Usuario* loginSistema(vector<Usuario*>& usuarios, FilaPrioridade& fila){
     cout << "Senha: ";
     cin >> senha;
 
+    // Verificar se existe na memória
     for(int i = 0; i < (int)usuarios.size(); i++){
         if(usuarios[i]->getLogin() == login && usuarios[i]->autenticar(senha)){
             return usuarios[i];
         }
     }
 
+    // Se não existir na memória, verificar na base de dados
+    if (db->authenticateUser(login, senha)) {
+        if (login == "admin") {
+            return new Funcionario(db, login, senha);
+        }
+
+        // Tentar carregar o paciente diretamente da base de dados
+        auto pacientes = Paciente::loadFromDatabase(db);
+        Paciente* encontrado = nullptr;
+        for (auto p : pacientes) {
+            if (p->getLogin() == login && p->autenticar(senha)) {
+                encontrado = p;
+                break;
+            }
+        }
+
+        for (auto p : pacientes) {
+            if (p != encontrado) {
+                delete p;
+            }
+        }
+
+        if (encontrado != nullptr) {
+            usuarios.push_back(encontrado);
+            return encontrado;
+        }
+    }
+
     return nullptr;
 }
 
-void realizarTriagem(vector<Usuario*>& usuarios, FilaPrioridade& fila){
+void realizarTriagem(Database* db, vector<Usuario*>& usuarios, FilaPrioridade& fila){
     string login;
     cout << "\nDigite o login do paciente: ";
     cin >> login;
@@ -231,11 +294,16 @@ void realizarTriagem(vector<Usuario*>& usuarios, FilaPrioridade& fila){
             p->setEmFila(true); // para sicronizar estado e manter consistencia
             p->adicionarHistorico(
            "Triagem inicial: Sintomas: " + sintomas +
-           " | Tipo: " + tipo + 
+           " | Tipo: Triagem Inicial" + 
            " | Prioridade: " + to_string(prioridade)
              );
-            p->marcarTriagemRealizada();
 
+            // Salvar triagem no banco de dados
+            int triageId = db->saveTriage(sintomas, "Triagem Inicial", prioridade);
+            if (triageId != -1) {
+                p->updateInDatabase(); // Atualiza status do paciente
+            }
+            p->marcarTriagemRealizada();
             p->limparSolicitacao();
             cout << "\nTriagem realizada com sucesso!\n";
             return;
