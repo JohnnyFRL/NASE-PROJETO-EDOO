@@ -11,10 +11,10 @@
 #include "Usuario.hpp"
 #include "Funcionario.hpp"
 #include "FilaPrioridade.hpp"
+#include "Database.hpp"
 
-class MainWindow : public QMainWindow{
+class MainWindow : public QMainWindow {
     Q_OBJECT
-
 public:
     MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
@@ -36,8 +36,8 @@ private:
     QPushButton* btnVerSenha;
     QLabel*      lblErro;
 
+    Database*             db;
     std::vector<Usuario*> usuarios;
     FilaPrioridade        fila;
 };
-
 #endif

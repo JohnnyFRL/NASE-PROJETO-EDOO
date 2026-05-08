@@ -3,7 +3,7 @@
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
-    app.setApplicationName("Nase UFPE");
+    app.setApplicationName("Saúde UFPE");
     app.setApplicationVersion("1.0");
 
     MainWindow w;

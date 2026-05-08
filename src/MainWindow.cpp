@@ -1,53 +1,61 @@
 #include "MainWindow.h"
-#include "LoginDialog.h"
 #include "MenuPacienteWindow.h"
 #include "MenuFuncionarioWindow.h"
 #include <QApplication>
-#include <QMessageBox>
 #include <QPainter>
 #include <QPixmap>
-#include <QGraphicsDropShadowEffect>
-#include <QFont>
-#include <QFontDatabase>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
-    usuarios.push_back(new Funcionario("admin", "Admin@123"));
+    db = new Database("sistema_medico.db");
+    db->initialize();
+
+    // Carregar pacientes do banco
+    auto pacientes = Paciente::loadFromDatabase(db);
+    for (auto p : pacientes)
+        usuarios.push_back(p);
+
+    // Admin padrão
+    if (!db->userExists("admin"))
+        db->saveUser("admin", "Admin@123", "funcionario");
+
+    bool adminExists = false;
+    for (auto u : usuarios)
+        if (u->getLogin() == "admin") { adminExists = true; break; }
+    if (!adminExists)
+        usuarios.push_back(new Funcionario(db, "admin", "Admin@123"));
+
     setupUI();
 }
 
 MainWindow::~MainWindow() {
     for (auto u : usuarios) delete u;
+    delete db;
 }
 
 void MainWindow::paintEvent(QPaintEvent* event) {
     QMainWindow::paintEvent(event);
     QPainter painter(this);
 
-    // Imagem de fundo direita
     QPixmap bg(":/nase_bg.png");
     if (!bg.isNull()) {
         int panelW = (int)(width() * 0.42);
         QRect bgRect(panelW, 0, width() - panelW, height());
         QPixmap scaled = bg.scaled(bgRect.size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-        // center-crop
         int ox = (scaled.width()  - bgRect.width())  / 2;
         int oy = (scaled.height() - bgRect.height()) / 2;
         painter.drawPixmap(bgRect, scaled, QRect(ox, oy, bgRect.width(), bgRect.height()));
-
         QLinearGradient fadeL(panelW, 0, panelW + 120, 0);
         fadeL.setColorAt(0.0, QColor(0xEC, 0xF8, 0xF2, 255));
         fadeL.setColorAt(1.0, QColor(0xEC, 0xF8, 0xF2, 0));
         painter.fillRect(QRect(panelW, 0, 120, height()), fadeL);
     }
 
-    // lado esquerdo fundo solido
     int panelW = (int)(width() * 0.42);
     QLinearGradient grad(0, 0, panelW, height());
     grad.setColorAt(0.0, QColor(0xD4, 0xEF, 0xE3));
     grad.setColorAt(1.0, QColor(0xBF, 0xE5, 0xD5));
     painter.fillRect(QRect(0, 0, panelW, height()), grad);
 
-    // decoração de círculos suaves no fundo
     painter.setRenderHint(QPainter::Antialiasing);
     QPen circlePen(QColor(0x1A, 0x5C, 0x3A, 40), 2);
     painter.setPen(circlePen);
@@ -63,13 +71,10 @@ void MainWindow::setupUI() {
 
     auto* central = new QWidget(this);
     setCentralWidget(central);
-
-    // raiz do layout: horizontal para dividir painel esquerdo (login) e direito (imagem)
     auto* root = new QHBoxLayout(central);
-    root->setContentsMargins(0, 0, 0, 0);
+    root->setContentsMargins(0,0,0,0);
     root->setSpacing(0);
 
-    // painel esquerdo: login e informações
     auto* leftPanel = new QWidget(central);
     leftPanel->setFixedWidth(380);
     leftPanel->setAttribute(Qt::WA_TranslucentBackground);
@@ -79,54 +84,27 @@ void MainWindow::setupUI() {
     panelLayout->setContentsMargins(48, 56, 48, 48);
     panelLayout->setSpacing(0);
 
-    // ── logo icone hospital
     auto* lblIcon = new QLabel("🏥", leftPanel);
     lblIcon->setAlignment(Qt::AlignLeft);
     lblIcon->setStyleSheet("font-size: 38px; background: transparent;");
 
-    // titulodo  nase
     auto* lblNase = new QLabel("NASE UFPE", leftPanel);
-    lblNase->setStyleSheet(
-        "font-size: 44px;"
-        "font-weight: 900;"
-        "color: #1A5C3A;"
-        "letter-spacing: 2px;"
-        "background: transparent;"
-        "font-family: 'Segoe UI', 'Arial Black', sans-serif;"
-    );
+    lblNase->setStyleSheet("font-size:44px;font-weight:900;color:#1A5C3A;letter-spacing:2px;background:transparent;font-family:'Segoe UI','Arial Black',sans-serif;");
 
-    // subtitulo
     auto* lblSub = new QLabel("NÚCLEO DE ATENÇÃO\nÀ SAÚDE DO ESTUDANTE", leftPanel);
-    lblSub->setStyleSheet(
-        "font-size: 11px;"
-        "font-weight: 700;"
-        "color: #2E7D52;"
-        "letter-spacing: 1.5px;"
-        "background: transparent;"
-        "line-height: 1.5;"
-    );
+    lblSub->setStyleSheet("font-size:11px;font-weight:700;color:#2E7D52;letter-spacing:1.5px;background:transparent;");
 
-    // Campo de login
     edtLogin = new QLineEdit(leftPanel);
     edtLogin->setPlaceholderText("  Login");
     edtLogin->setMinimumHeight(46);
     edtLogin->setStyleSheet(R"(
-        QLineEdit {
-            background: rgba(255,255,255,0.92);
-            border: 1.5px solid rgba(26,92,58,0.18);
-            border-radius: 8px;
-            font-size: 14px;
-            color: #1A3028;
-            padding: 0 14px;
-        }
-        QLineEdit:focus {
-            border: 1.5px solid #2E7D52;
-            background: white;
-        }
+        QLineEdit { background:rgba(255,255,255,0.92); border:1.5px solid rgba(26,92,58,0.18);
+            border-radius:8px; font-size:14px; color:#1A3028; padding:0 14px; }
+        QLineEdit:focus { border:1.5px solid #2E7D52; background:white; }
     )");
 
-    // Container senha + botao ver senha
-    auto* senhaRow   = new QWidget(leftPanel);
+    // Campo senha com botão de mostrar/ocultar senha
+    auto* senhaRow    = new QWidget(leftPanel);
     senhaRow->setAttribute(Qt::WA_TranslucentBackground);
     auto* senhaLayout = new QHBoxLayout(senhaRow);
     senhaLayout->setContentsMargins(0,0,0,0);
@@ -143,67 +121,40 @@ void MainWindow::setupUI() {
     btnVerSenha->setCheckable(true);
     btnVerSenha->setCursor(Qt::PointingHandCursor);
     btnVerSenha->setStyleSheet(R"(
-        QPushButton {
-            background-color: rgba(255,255,255,0.85);
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-        }
-        QPushButton:hover  { background-color: rgba(255,255,255,1.0); }
-        QPushButton:checked{ background-color: rgba(200,240,220,1.0); }
+        QPushButton { background-color:rgba(255,255,255,0.85); border:none; border-radius:8px; font-size:18px; }
+        QPushButton:hover { background-color:rgba(255,255,255,1.0); }
+        QPushButton:checked { background-color:rgba(200,240,220,1.0); }
     )");
 
     senhaLayout->addWidget(edtSenha);
     senhaLayout->addWidget(btnVerSenha);
 
-    // botoes
     btnLogin = new QPushButton("🔒   LOGIN", leftPanel);
     btnLogin->setMinimumHeight(46);
     btnLogin->setCursor(Qt::PointingHandCursor);
     btnLogin->setStyleSheet(R"(
-        QPushButton {
-            background-color: #1A5C3A;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
-        QPushButton:hover {
-            background-color: #226B47;
-        }
-        QPushButton:pressed {
-            background-color: #134529;
-        }
+        QPushButton { background-color:#1A5C3A; color:white; border:none; border-radius:8px;
+            font-size:14px; font-weight:bold; letter-spacing:2px; }
+        QPushButton:hover { background-color:#226B47; }
+        QPushButton:pressed { background-color:#134529; }
     )");
 
     btnSair = new QPushButton("  SAIR", leftPanel);
     btnSair->setMinimumHeight(44);
     btnSair->setCursor(Qt::PointingHandCursor);
     btnSair->setStyleSheet(R"(
-        QPushButton {
-            background-color: transparent;
-            color: #1A5C3A;
-            border: 1.5px solid #1A5C3A;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-        }
-        QPushButton:hover {
-            background-color: rgba(26,92,58,0.08);
-        }
+        QPushButton { background-color:transparent; color:#1A5C3A; border:1.5px solid #1A5C3A;
+            border-radius:8px; font-size:14px; font-weight:600; letter-spacing:1.5px; }
+        QPushButton:hover { background-color:rgba(26,92,58,0.08); }
     )");
 
     lblErro = new QLabel("", leftPanel);
-    lblErro->setStyleSheet("color: #c0392b; font-size: 12px; background: transparent;");
+    lblErro->setStyleSheet("color:#c0392b; font-size:12px; background:transparent;");
     lblErro->setAlignment(Qt::AlignCenter);
     lblErro->hide();
 
-    // dica de teste (remover depois)
     auto* lblDica = new QLabel("Teste: admin / Admin@123", leftPanel);
-    lblDica->setStyleSheet("color: rgba(26,92,58,0.45); font-size: 10px; background: transparent;");
+    lblDica->setStyleSheet("color:rgba(26,92,58,0.45); font-size:10px; background:transparent;");
     lblDica->setAlignment(Qt::AlignCenter);
 
     panelLayout->addWidget(lblIcon);
@@ -228,16 +179,16 @@ void MainWindow::setupUI() {
     root->addWidget(leftPanel);
     root->addStretch();
 
-    connect(btnLogin, &QPushButton::clicked, this, &MainWindow::onLoginClicked);
-    connect(btnSair,  &QPushButton::clicked, this, &MainWindow::onSairClicked);
-    connect(edtSenha, &QLineEdit::returnPressed, this, &MainWindow::onLoginClicked);
-    connect(btnVerSenha, &QPushButton::toggled, this, [this](bool on){
+    connect(btnLogin,   &QPushButton::clicked,     this, &MainWindow::onLoginClicked);
+    connect(btnSair,    &QPushButton::clicked,     this, &MainWindow::onSairClicked);
+    connect(edtSenha,   &QLineEdit::returnPressed, this, &MainWindow::onLoginClicked);
+    connect(btnVerSenha,&QPushButton::toggled, this, [this](bool on){
         edtSenha->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
         btnVerSenha->setText(on ? "🙈" : "👁");
     });
 }
 
-void MainWindow::onLoginClicked() {
+void MainWindow::onLoginClicked() { // Esconder mensagem de erro anterior 
     lblErro->hide();
     QString login = edtLogin->text().trimmed();
     QString senha = edtSenha->text();
@@ -247,10 +198,10 @@ void MainWindow::onLoginClicked() {
             edtSenha->clear();
             Paciente* p = dynamic_cast<Paciente*>(u);
             if (p) {
-                auto* w = new MenuPacienteWindow(p, usuarios, fila);
+                auto* w = new MenuPacienteWindow(p, usuarios, fila, db);
                 w->show();
             } else {
-                auto* w = new MenuFuncionarioWindow(u, usuarios, fila);
+                auto* w = new MenuFuncionarioWindow(u, usuarios, fila, db);
                 w->show();
             }
             return;
@@ -262,6 +213,4 @@ void MainWindow::onLoginClicked() {
     edtSenha->setFocus();
 }
 
-void MainWindow::onSairClicked() {
-    QApplication::quit();
-}
+void MainWindow::onSairClicked() { QApplication::quit(); }
