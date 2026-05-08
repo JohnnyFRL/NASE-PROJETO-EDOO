@@ -5,12 +5,16 @@
 #include <vector>
 #include "Usuario.hpp"
 #include "FilaPrioridade.hpp"
+#include "Database.hpp"
 
 using namespace std;
 
 class Funcionario : public Usuario{
+private:
+    Database* db;
+
 public:
-    Funcionario(string login, string senha);
+    Funcionario(Database* db, string login, string senha);
     void menu(vector<Usuario*>& usuarios, FilaPrioridade& fila) override;
 };
 

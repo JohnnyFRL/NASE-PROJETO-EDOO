@@ -30,6 +30,9 @@ public:
     // [T5] Valida telefone:
     //      aceita (XX) XXXXX-XXXX
     static bool validarTelefone(const string& telefone, string& erro);
+
+    // [T6] Valida idade: apenas digitos, valor entre 1 e 100
+    static bool validarIdade(const string& idadeStr, int& idadeOut, string& erro);
 };
 
 #endif

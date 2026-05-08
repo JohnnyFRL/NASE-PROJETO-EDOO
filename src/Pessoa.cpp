@@ -1,49 +1,59 @@
 #include "Pessoa.hpp"
 
-Pessoa::Pessoa(string nome, int idade,string cpf, string telefone, string endereco){
-    this->nome = nome;
-    this->idade = idade;
-    this->cpf = cpf;
-    this->telefone = telefone;
-    this->endereco = endereco;
+using namespace std;
+
+Pessoa::Pessoa(const string& nome, int idade, const string& cpf, const string& telefone, const string& endereco)
+    : id(-1), idade(idade), nome(nome), cpf(cpf), telefone(telefone), endereco(endereco) {
 }
 
-string Pessoa::getPessoa(){
+Pessoa::Pessoa(int id, const string& nome, int idade, const string& cpf, const string& telefone, const string& endereco)
+    : id(id), idade(idade), nome(nome), cpf(cpf), telefone(telefone), endereco(endereco) {
+}
+
+string Pessoa::getPessoa() const {
     return "nome: " + nome + ", cpf: " + cpf + ", telefone: " + telefone + ", endereco: " + endereco;
 }
 
-int Pessoa::getIdade(){
+int Pessoa::getId() const {
+    return id;
+}
+
+void Pessoa::setId(int novoId) {
+    id = novoId;
+}
+
+int Pessoa::getIdade() const {
     return idade;
 }
 
-string Pessoa::getNome(){
+const string& Pessoa::getNome() const {
     return nome;
 }
 
-string Pessoa::getCpf(){
+const string& Pessoa::getCpf() const {
     return cpf;
 }
 
-string Pessoa::getTelefone(){
+const string& Pessoa::getTelefone() const {
     return telefone;
 }
 
-string Pessoa::getEndereco(){
+const string& Pessoa::getEndereco() const {
     return endereco;
 }
 
-void Pessoa::setNome(string novoNome){
+void Pessoa::setNome(const string& novoNome) {
     nome = novoNome;
 }
 
-void Pessoa::setIdade(int novaIdade){
+void Pessoa::setIdade(int novaIdade) {
     idade = novaIdade;
 }
 
-void Pessoa::setTelefone(string novoTelefone){
+void Pessoa::setTelefone(const string& novoTelefone) {
     telefone = novoTelefone;
 }
 
-void Pessoa::setEndereco(string novoEndereco){
+void Pessoa::setEndereco(const string& novoEndereco) {
     endereco = novoEndereco;
 }

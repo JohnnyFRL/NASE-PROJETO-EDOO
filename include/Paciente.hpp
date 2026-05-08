@@ -5,6 +5,7 @@
 #include <vector>
 #include "Usuario.hpp"
 #include "Triagem.hpp"
+#include "Database.hpp"
 
 
 #include <string>
@@ -31,18 +32,23 @@ private:
     string descricaoSolicitacao;
     Triagem* triagem; // Associação com a classe Triagem
     bool emFila;
+    Database* db; // referência ao banco de dados
+
     bool jaFezTriagem; // para evitar que o paciente faça triagem mais de uma vez e fique com múltiplas triagens ativas, o que causava um bug na hora de finalizar o atendimento, já que o sistema só atualizava o status do paciente para "atendido" na última triagem feita, e as outras ficavam ativas, fazendo com que o paciente não pudesse pedir uma nova consulta depois de finalizar a primeira, já que o sistema achava que ele ainda tinha uma triagem ativa
     bool temSolicitacao; // correção de bug de duplicado na triagem
     
 public:
-    Paciente(string nome, int idade, string cpf, string telefone, string endereco, string curso, string email, 
+    Paciente(Database* db, string nome, int idade, string cpf, string telefone, string endereco, string curso, string email,
         bool alunoUFPE, bool bolsistaPROAES, string login, string senha);
+    Paciente(Database* db, int idpessoa, string nome, int idade, string cpf, string telefone, string endereco,
+             string curso, string email, bool alunoUFPE, bool bolsistaPROAES, string login, string senha,
+             StatusPaciente status, bool jaFezTriagem, bool temSolicitacao, bool emFila);
     ~Paciente(); // libera a memoria do ponteiro triagem
     string getPaciente();
     void validar();
     string getStatus(); // status do paciente como valido ou não valido para triagem
-    
-    Triagem* getTriagem(); 
+
+    Triagem* getTriagem();
     void setTriagem(Triagem* triagem);
 
     void menu(vector<Usuario*>& usuarios, FilaPrioridade& fila) override;
@@ -65,6 +71,11 @@ public:
     void setCurso(string novoCurso);
     void setEmail(string novoEmail);
     void setBolsistaPROAES(bool valor);
+
+    // Operações de banco de dados
+    bool saveToDatabase();
+    bool updateInDatabase();
+    static vector<Paciente*> loadFromDatabase(Database* db);
     void setDescricaoSolicitacao(string desc);
 
 
@@ -73,4 +84,5 @@ public:
     void marcarTriagemRealizada(); // para marcar que o paciente já fez a triagem, para evitar que ele faça mais de uma triagem e fique com múltiplas triagens ativas, o que causava um bug na hora de finalizar o atendimento, já que o sistema só atualizava o status do paciente para "atendido" na última triagem feita, e as outras ficavam ativas, fazendo com que o paciente não pudesse pedir uma nova consulta depois de finalizar a primeira, já que o sistema achava que ele ainda tinha uma triagem ativa
 
 };
+
 #endif

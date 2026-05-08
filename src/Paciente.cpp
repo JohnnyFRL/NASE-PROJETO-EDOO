@@ -1,20 +1,40 @@
 #include "FilaPrioridade.hpp"
 #include "Paciente.hpp"
 #include "Validacao.hpp"
+#include <map>
+
+using namespace std;
 
 
-Paciente::Paciente(string nome, int idade, string cpf, string telefone, string endereco, string curso, string email, bool alunoUFPE, bool bolsistaPROAES,
+Paciente::Paciente(Database* db, string nome, int idade, string cpf, string telefone, string endereco, string curso, string email, bool alunoUFPE, bool bolsistaPROAES,
     string login, string senha)
     : Pessoa(nome, idade, cpf, telefone, endereco), Usuario(login, senha) {
+    this->db = db;
     this->curso = curso;
     this->email = email;
     this->alunoUFPE= alunoUFPE;
-    this->bolsistaPROAES= bolsistaPROAES; 
+    this->bolsistaPROAES= bolsistaPROAES;
     this->status = NAO_VALIDADO;
     this->triagem = nullptr;
     this->temSolicitacao = false;
     this->emFila = false;
     this->jaFezTriagem = false;
+}
+
+Paciente::Paciente(Database* db, int idpessoa, string nome, int idade, string cpf, string telefone, string endereco,
+             string curso, string email, bool alunoUFPE, bool bolsistaPROAES, string login, string senha,
+             StatusPaciente status, bool jaFezTriagem, bool temSolicitacao, bool emFila)
+    : Pessoa(idpessoa, nome, idade, cpf, telefone, endereco), Usuario(login, senha) {
+    this->db = db;
+    this->curso = curso;
+    this->email = email;
+    this->alunoUFPE = alunoUFPE;
+    this->bolsistaPROAES = bolsistaPROAES;
+    this->status = status;
+    this->triagem = nullptr;
+    this->temSolicitacao = temSolicitacao;
+    this->emFila = emFila;
+    this->jaFezTriagem = jaFezTriagem;
 }
 
 string Paciente::getPaciente(){
@@ -147,6 +167,9 @@ void Paciente::limparSolicitacao(){
 
 void Paciente::adicionarHistorico(string registro){
     historicoSolicitacoes.push_back(registro);
+    if (db) {
+        db->saveHistory(getId(), registro);
+    }
 }
 
 vector<string> Paciente::getHistoricoSolicitacoes(){
@@ -155,6 +178,7 @@ vector<string> Paciente::getHistoricoSolicitacoes(){
 
 void Paciente::finalizarAtendimento(){
     limparSolicitacao();
+    setEmFila(false); // paciente sai da fila
 
     adicionarHistorico(
         "Atendimento finalizado | Ultima prioridade: " + 
@@ -211,6 +235,7 @@ void Paciente::setBolsistaPROAES(bool valor){
 
 void Paciente::editarDados(vector<Usuario*>& usuarios){
     int opcao;
+    bool changed = false;
     string erro, novoValor;
 
     do {
@@ -236,6 +261,7 @@ void Paciente::editarDados(vector<Usuario*>& usuarios){
                     if(Validacao::validarNome(novoValor, erro)){
                         setNome(novoValor);
                         cout << "Nome atualizado.\n";
+                        changed = true;
                         break;
                     }
                     cout << "[ERRO] " << erro << "\n";
@@ -244,28 +270,17 @@ void Paciente::editarDados(vector<Usuario*>& usuarios){
 
             case 2: {
                 string idadeStr;
+                int novaIdade;
                 while(true){
                     cout << "Nova idade: ";
                     getline(cin, idadeStr);
-                    bool soNumero = true;
-                    for(int i = 0; i < (int)idadeStr.length(); i++){
-                        if(idadeStr[i] < '0' || idadeStr[i] > '9'){
-                            soNumero = false;
-                            break;
-                        }
+                    if(Validacao::validarIdade(idadeStr, novaIdade, erro)){
+                        setIdade(novaIdade);
+                        cout << "Idade atualizada.\n";
+                        changed = true;
+                        break;
                     }
-                    if(!soNumero || idadeStr.empty()){
-                        cout << "[ERRO] Digite apenas numeros!\n";
-                        continue;
-                    }
-                    int novaIdade = stoi(idadeStr);
-                    if(novaIdade <= 0 || novaIdade > 130){
-                        cout << "[ERRO] Idade invalida!\n";
-                        continue;
-                    }
-                    setIdade(novaIdade);
-                    cout << "Idade atualizada.\n";
-                    break;
+                    cout << "[ERRO]" << erro << "\n";
                 }
                 break;
             }
@@ -277,6 +292,7 @@ void Paciente::editarDados(vector<Usuario*>& usuarios){
                     if(Validacao::validarTelefone(novoValor, erro)){
                         setTelefone(novoValor);
                         cout << "Telefone atualizado.\n";
+                        changed = true;
                         break;
                     }
                     cout << "[ERRO] " << erro << "\n";
@@ -288,6 +304,7 @@ void Paciente::editarDados(vector<Usuario*>& usuarios){
                 getline(cin, novoValor);
                 setEndereco(novoValor);
                 cout << "Endereco atualizado.\n";
+                changed = true;
                 break;
 
             case 5:
@@ -295,6 +312,7 @@ void Paciente::editarDados(vector<Usuario*>& usuarios){
                 getline(cin, novoValor);
                 setCurso(novoValor);
                 cout << "Curso atualizado.\n";
+                changed = true;
                 break;
 
             case 6:
@@ -304,6 +322,7 @@ void Paciente::editarDados(vector<Usuario*>& usuarios){
                     if(Validacao::validarEmail(novoValor, erro)){
                         setEmail(novoValor);
                         cout << "Email atualizado.\n";
+                        changed = true;
                         break;
                     }
                     cout << "[ERRO] " << erro << "\n";
@@ -317,6 +336,7 @@ void Paciente::editarDados(vector<Usuario*>& usuarios){
                 cin.ignore();
                 setBolsistaPROAES(resp == 's' || resp == 'S');
                 cout << "Status atualizado para: " << getStatus() << "\n";
+                changed = true;
                 break;
             }
 
@@ -328,7 +348,163 @@ void Paciente::editarDados(vector<Usuario*>& usuarios){
                 cout << "Opcao invalida!\n";
         }
 
+        if (changed) {
+            if (!updateInDatabase()) {
+                cout << "[ERRO] Nao foi possivel salvar as alteracoes no banco de dados.\n";
+            } else {
+                cout << "Alteracoes salvas no banco de dados com sucesso.\n";
+            }
+            changed = false;
+        }
+
     } while(opcao != 0);
+}
+
+bool Paciente::saveToDatabase() {
+    // Salvar dados da pessoa primeiro
+    int idpessoa = db->savePerson(getId(), getNome(), getIdade(), getCpf(), getTelefone(), getEndereco());
+    if (idpessoa == -1) {
+        return false;
+    }
+
+    setId(idpessoa);
+
+    // Salvar dados do usuário com login real
+    if (!db->saveUser(getLogin(), getSenha(), "paciente")) {
+        return false;
+    }
+
+    // Salvar dados do paciente com o login associado
+    string statusStr;
+    switch(status) {
+        case VALIDADO: statusStr = "VALIDADO"; break;
+        case NAO_VALIDADO: statusStr = "NAO_VALIDADO"; break;
+        case PERDE_PRIORIDADE: statusStr = "PERDE_PRIORIDADE"; break;
+    }
+
+    return db->savePatient(idpessoa, getLogin(), curso, email, alunoUFPE, bolsistaPROAES, statusStr,
+                           jaFezTriagem, temSolicitacao, emFila);
+}
+
+bool Paciente::updateInDatabase() {
+    // Atualizar dados da pessoa
+    int idpessoa = db->savePerson(getId(), getNome(), getIdade(), getCpf(), getTelefone(), getEndereco());
+    if (idpessoa == -1) {
+        return false;
+    }
+
+    setId(idpessoa);
+
+    string statusStr;
+    switch(status) {
+        case VALIDADO: statusStr = "VALIDADO"; break;
+        case NAO_VALIDADO: statusStr = "NAO_VALIDADO"; break;
+        case PERDE_PRIORIDADE: statusStr = "PERDE_PRIORIDADE"; break;
+    }
+
+    return db->savePatient(idpessoa, getLogin(), curso, email, alunoUFPE, bolsistaPROAES, statusStr,
+                           jaFezTriagem, temSolicitacao, emFila);
+}
+
+vector<Paciente*> Paciente::loadFromDatabase(Database* db) {
+    vector<Paciente*> pacientes;
+
+    auto persons = db->getAllPersons();
+    auto patientData = db->getAllPatients();
+    auto users = db->getAllUsers();
+
+    // Criar um mapa de person_id para dados de paciente para facilitar a busca
+    map<int, vector<string>> patientMap;
+    for (const auto& p : patientData) {
+        if (p.size() >= 7) {
+            patientMap[stoi(p[0])] = p; // person_id -> dados do paciente
+        }
+    }
+
+    // Criar um mapa de login para dados de usuário
+    map<string, vector<string>> userMap;
+    for (const auto& u : users) {
+        if (u.size() >= 2) {
+            userMap[u[0]] = u; // login -> dados do usuário
+        }
+    }
+
+    for (const auto& person : persons) {
+        if (person.size() < 6) continue;
+
+        int idpessoa = stoi(person[0]);
+        auto it = patientMap.find(idpessoa);
+        if (it == patientMap.end()) continue; // Não é um paciente
+
+        const auto& patient = it->second;
+        string nome = person[1];
+        int idade = stoi(person[2]);
+        string cpf = person[3];
+        string telefone = person[4];
+        string endereco = person[5];
+
+        string curso;
+        string email;
+        bool alunoUFPE = false;
+        bool bolsistaPROAES = false;
+        string statusStr;
+        bool jaFezTriagem = false;
+        bool temSolicitacao = false;
+        bool emFila = false;
+        string login = "paciente_" + to_string(idpessoa);
+
+        if (patient.size() >= 9) {
+            // Novo formato de linha de paciente com login armazenado
+            login = patient[1];
+            curso = patient[2];
+            email = patient[3];
+            alunoUFPE = stoi(patient[4]) != 0;
+            bolsistaPROAES = stoi(patient[5]) != 0;
+            statusStr = patient[6];
+            jaFezTriagem = patient.size() > 7 ? stoi(patient[7]) != 0 : false;
+            temSolicitacao = patient.size() > 8 ? stoi(patient[8]) != 0 : false;
+            emFila = patient.size() > 9 ? stoi(patient[9]) != 0 : false;
+        } else {
+            // Formato antigo de linha de paciente, manter compatibilidade com versões anteriores
+            curso = patient[1];
+            email = patient[2];
+            alunoUFPE = stoi(patient[3]) != 0;
+            bolsistaPROAES = stoi(patient[4]) != 0;
+            statusStr = patient[5];
+            jaFezTriagem = patient.size() > 6 ? stoi(patient[6]) != 0 : false;
+            temSolicitacao = patient.size() > 7 ? stoi(patient[7]) != 0 : false;
+            emFila = patient.size() > 8 ? stoi(patient[8]) != 0 : false;
+        }
+
+        StatusPaciente status;
+        if (statusStr == "VALIDADO") status = VALIDADO;
+        else if (statusStr == "PERDE_PRIORIDADE") status = PERDE_PRIORIDADE;
+        else status = NAO_VALIDADO;
+
+        // Encontrar senha na tabela de usuários
+        string senha = "password"; // Senha padrão
+        auto userIt = userMap.find(login);
+        if (userIt != userMap.end()) {
+            const auto& userData = userIt->second;
+            if (userData.size() >= 2) {
+                senha = userData[1];
+            }
+        }
+
+        Paciente* p = new Paciente(db, idpessoa, nome, idade, cpf, telefone, endereco,
+                                  curso, email, alunoUFPE, bolsistaPROAES,
+                                  login, senha, status, jaFezTriagem, temSolicitacao, emFila);
+
+        // Carregar histórico
+        auto history = db->getPatientHistory(idpessoa);
+        for (const auto& h : history) {
+            p->adicionarHistorico(h);
+        }
+
+        pacientes.push_back(p);
+    }
+
+    return pacientes;
 }
 
 void Paciente::setDescricaoSolicitacao(string desc){
