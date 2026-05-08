@@ -4,12 +4,15 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
 
-TARGET = NaseUfpe
+TARGET = SaudeUFPE
 TEMPLATE = app
+
+INCLUDEPATH += .
 
 SOURCES += \
     main_qt.cpp \
     stubs.cpp \
+    Database.cpp \
     Pessoa.cpp \
     Usuario.cpp \
     Paciente.cpp \
@@ -23,9 +26,11 @@ SOURCES += \
     MenuPacienteWindow.cpp \
     MenuFuncionarioWindow.cpp \
     TriagemDialog.cpp \
-    SolicitacoesDialog.cpp
+    SolicitacoesDialog.cpp \
+    EditarDadosDialog.cpp
 
 HEADERS += \
+    Database.hpp \
     Pessoa.hpp \
     Usuario.hpp \
     Paciente.hpp \
@@ -33,16 +38,14 @@ HEADERS += \
     Triagem.hpp \
     FilaPrioridade.hpp \
     Validacao.hpp \
+    NaseStyle.h \
     MainWindow.h \
     LoginDialog.h \
     CadastroDialog.h \
     MenuPacienteWindow.h \
     MenuFuncionarioWindow.h \
-    NaseStyle.h \
     TriagemDialog.h \
-    SolicitacoesDialog.h
--e 
-RESOURCES += resources.qrc
+    SolicitacoesDialog.h \
+    EditarDadosDialog.h
 
-SOURCES += EditarDadosDialog.cpp
-HEADERS += EditarDadosDialog.h
+RESOURCES += resources.qrc
