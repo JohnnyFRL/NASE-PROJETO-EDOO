@@ -38,7 +38,7 @@ CadastroDialog::CadastroDialog(std::vector<Usuario*>& usuarios, Database* db, QW
     edtCpf      = mkEdit("ex: 123.456.789-00");
     edtTelefone = mkEdit("ex: (81) 91234-5678");
     edtEndereco = mkEdit("Rua, número, bairro...");
-    edtCurso    = mkEdit("ex: Ciência da Computação");
+    edtCurso    = mkEdit("ex: Sistema de Informação");
     edtEmail    = mkEdit("ex: aluno@ufpe.br");
     chkUFPE     = new QCheckBox("Aluno da UFPE");
     chkPROAES   = new QCheckBox("Bolsista PROAES");
