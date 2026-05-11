@@ -38,6 +38,10 @@ private slots:
     void atualizarHistorico();
 
 private:
+
+    int atendimentosHoje = 0;
+    int atendimentosRealizados = 0;
+
     Usuario*               usuario;
     std::vector<Usuario*>& usuarios;
     FilaPrioridade&        fila;

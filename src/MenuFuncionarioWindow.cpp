@@ -289,6 +289,8 @@ void MenuFuncionarioWindow::atualizarDashboard() {
     }
     if (lblStatSolic) lblStatSolic->setText(QString::number(sol));
     if (lblStatFila)  lblStatFila->setText(QString::number(fila.total()));
+    if (lblStatAtend) lblStatAtend->setText(QString::number(atendimentosHoje)); // correção para atualizacao do dashboard
+    if (lblStatTotal) lblStatTotal->setText(QString::number(atendimentosRealizados));
     if (lblDashAlta)  lblDashAlta->setText(QString::number(fila.totalAlta()) + " pessoas");
     if (lblDashMedia) lblDashMedia->setText(QString::number(fila.totalMedia()) + " pessoas");
     if (lblDashBaixa) lblDashBaixa->setText(QString::number(fila.totalBaixa()) + " pessoas");
@@ -780,14 +782,32 @@ void MenuFuncionarioWindow::buildPageEditar(QWidget* pg) {
 
 void MenuFuncionarioWindow::onChamarProximo() {
     Paciente* p = fila.chamarProximo();
-    atualizarDashboard();
+
     if (p) {
         p->setEmFila(false);
         p->finalizarAtendimento();
-        QMessageBox::information(this,"Paciente chamado",
-                                 "📢  " + QString::fromStdString(p->getNome()) + " foi chamado para atendimento!");
+
+        // Atualiza contadores primeiro
+        atendimentosHoje++;
+        atendimentosRealizados++;
+
+        // Atualiza dashboard depois
+        atualizarDashboard();
+        atualizarFila();
+
+        QMessageBox::information(
+            this,
+            "Paciente chamado",
+            "📢  " + QString::fromStdString(p->getNome()) +
+                " foi chamado para atendimento!"
+            );
+
     } else {
-        QMessageBox::information(this,"Fila vazia","Nenhum paciente aguardando.");
+        QMessageBox::information(
+            this,
+            "Fila vazia",
+            "Nenhum paciente aguardando."
+            );
     }
 }
 
