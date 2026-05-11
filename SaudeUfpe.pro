@@ -1,4 +1,4 @@
-QT       += core gui widgets
+QT += core gui widgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -7,45 +7,46 @@ CONFIG += c++17
 TARGET = SaudeUFPE
 TEMPLATE = app
 
-INCLUDEPATH += .
+INCLUDEPATH += include
 
 SOURCES += \
-    main_qt.cpp \
-    stubs.cpp \
-    Database.cpp \
-    Pessoa.cpp \
-    Usuario.cpp \
-    Paciente.cpp \
-    Funcionario.cpp \
-    Triagem.cpp \
-    FilaPrioridade.cpp \
-    Validacao.cpp \
-    MainWindow.cpp \
-    LoginDialog.cpp \
-    CadastroDialog.cpp \
-    MenuPacienteWindow.cpp \
-    MenuFuncionarioWindow.cpp \
-    TriagemDialog.cpp \
-    SolicitacoesDialog.cpp \
-    EditarDadosDialog.cpp
+    src/main_qt.cpp \
+    src/stubs.cpp \
+    src/Database.cpp \
+    src/Pessoa.cpp \
+    src/Usuario.cpp \
+    src/Paciente.cpp \
+    src/Funcionario.cpp \
+    src/Triagem.cpp \
+    src/FilaPrioridade.cpp \
+    src/Validacao.cpp \
+    src/MainWindow.cpp \
+    src/LoginDialog.cpp \
+    src/CadastroDialog.cpp \
+    src/MenuPacienteWindow.cpp \
+    src/MenuFuncionarioWindow.cpp \
+    src/TriagemDialog.cpp \
+    src/SolicitacoesDialog.cpp \
+    src/EditarDadosDialog.cpp
 
 HEADERS += \
-    Database.hpp \
-    Pessoa.hpp \
-    Usuario.hpp \
-    Paciente.hpp \
-    Funcionario.hpp \
-    Triagem.hpp \
-    FilaPrioridade.hpp \
-    Validacao.hpp \
-    NaseStyle.h \
-    MainWindow.h \
-    LoginDialog.h \
-    CadastroDialog.h \
-    MenuPacienteWindow.h \
-    MenuFuncionarioWindow.h \
-    TriagemDialog.h \
-    SolicitacoesDialog.h \
-    EditarDadosDialog.h
+    include/Database.hpp \
+    include/Pessoa.hpp \
+    include/Usuario.hpp \
+    include/Paciente.hpp \
+    include/Funcionario.hpp \
+    include/Triagem.hpp \
+    include/FilaPrioridade.hpp \
+    include/Validacao.hpp \
+    include/NaseStyle.h \
+    include/MainWindow.h \
+    include/LoginDialog.h \
+    include/CadastroDialog.h \
+    include/MenuPacienteWindow.h \
+    include/MenuFuncionarioWindow.h \
+    include/TriagemDialog.h \
+    include/SolicitacoesDialog.h \
+    include/EditarDadosDialog.h
 
-RESOURCES += resources.qrc
+RESOURCES += \
+    resources/resources.qrc
