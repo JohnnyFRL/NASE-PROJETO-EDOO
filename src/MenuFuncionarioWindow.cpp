@@ -168,6 +168,10 @@ MenuFuncionarioWindow::MenuFuncionarioWindow(Usuario* usuario, std::vector<Usuar
     connect(btnSair,   &QPushButton::clicked, this, &MenuFuncionarioWindow::onVoltar);
 
     btnDash->setChecked(true);
+    // Carregar dados de atendimento do banco de dados
+    if (db) {
+        db->loadAttendance(usuario->getLogin(), atendimentosHoje, atendimentosRealizados);
+    }
     atualizarDashboard();
     applyStyle();
 }
@@ -790,6 +794,11 @@ void MenuFuncionarioWindow::onChamarProximo() {
         // Atualiza contadores primeiro
         atendimentosHoje++;
         atendimentosRealizados++;
+
+        // Salva os contadores no banco de dados
+        if (db) {
+            db->saveAttendance(usuario->getLogin(), atendimentosHoje, atendimentosRealizados);
+        }
 
         // Atualiza dashboard depois
         atualizarDashboard();

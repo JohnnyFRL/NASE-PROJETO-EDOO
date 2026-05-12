@@ -75,6 +75,9 @@ void Database::loadFromFile() {
         } else if (line == "[HISTORICO]" || line == "[HISTORY]") {
             currentTable = "historico";
             continue;
+        } else if (line == "[ATENDIMENTO]" || line == "[ATTENDANCE]") {
+            currentTable = "atendimento";
+            continue;
         }
 
         //lógica para mapear e popular corrretamente as tabelas
@@ -97,6 +100,11 @@ void Database::loadFromFile() {
         } else if (currentTable == "historico") {
             auto row = splitEscaped(line);
             if (row.size() >= 3) historyTable.push_back(row);
+        } else if (currentTable == "atendimento") {
+            auto row = splitEscaped(line);
+            if (row.size() >= 3) {
+                atendimentoTable[row[0]] = {row[0], row[1], row[2]}; // login, atendimentos_hoje, atendimentos_realizados
+            }
         }
     }
 }
@@ -152,6 +160,12 @@ void Database::saveToFile() {
             if (i < row.size() - 1) file << ",";
         }
         file << "\n";
+    }
+
+    // Salvar Atendimento
+    file << "[ATENDIMENTO]\n";
+    for (const auto& pair : atendimentoTable) {
+        file << escapeField(pair.first) << "," << escapeField(pair.second[1]) << "," << escapeField(pair.second[2]) << "\n";
     }
 }
 
@@ -355,4 +369,25 @@ bool Database::saveQueueState(const string& queueData) {
 
 string Database::loadQueueState() {
     return "";
+}
+
+// Operações de Atendimento
+bool Database::saveAttendance(const string& login, int atendimentosHoje, int atendimentosRealizados) {
+    atendimentoTable[login] = {login, to_string(atendimentosHoje), to_string(atendimentosRealizados)};
+    saveToFile();
+    return true;
+}
+
+bool Database::loadAttendance(const string& login, int& atendimentosHoje, int& atendimentosRealizados) {
+    auto it = atendimentoTable.find(login);
+    if (it != atendimentoTable.end()) {
+        try {
+            atendimentosHoje = stoi(it->second[1]);
+            atendimentosRealizados = stoi(it->second[2]);
+            return true;
+        } catch (...) {
+            return false;
+        }
+    }
+    return false;
 }

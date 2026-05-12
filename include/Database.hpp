@@ -19,6 +19,7 @@ private:
     vector<vector<string>> patientTable;
     vector<vector<string>> triageTable;
     vector<vector<string>> historyTable;
+    map<string, vector<string>> atendimentoTable; // login -> [atendimentos_hoje, atendimentos_realizados, data]
 
     void loadFromFile();
     void saveToFile();
@@ -61,6 +62,10 @@ public:
     // Operações de Fila
     bool saveQueueState(const string& queueData);
     string loadQueueState();
+
+    // Operações de Atendimento
+    bool saveAttendance(const string& login, int atendimentosHoje, int atendimentosRealizados);
+    bool loadAttendance(const string& login, int& atendimentosHoje, int& atendimentosRealizados);
 };
 
 #endif
